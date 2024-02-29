@@ -1,0 +1,46 @@
+<script>
+	import orca from '../assets/orca_swim.png';
+	let images = [
+		{ src: orca, direction: 'left' },
+		{ src: orca, direction: 'right' }
+	];
+</script>
+
+<main class="min-h-screen w-full">
+	{#each images as image, i}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+		<!-- svelte-ignore a11y-img-redundant-alt -->
+		<img
+			src={image.src}
+			class="animate-move block mx-auto cursor-pointer w-20 h-10"
+			alt="orca"
+			style={`animation-direction: ${image.direction === 'left' ? 'normal' : 'reverse'};`}
+			on:click={() => alert(`Image ${i + 1} clicked!`)}
+		/>
+	{/each}
+</main>
+
+<style lang="postcss">
+	@keyframes move-left {
+		from {
+			transform: translateX(-100vw);
+		}
+		to {
+			transform: translateX(calc(100vw + 100%));
+		} /* Offset by image width */
+	}
+
+	@keyframes move-right {
+		from {
+			transform: translateX(100vw);
+		}
+		to {
+			transform: translateX(calc(-100vw - 100%));
+		} /* Offset by image width */
+	}
+
+	.animate-move {
+		animation: 5s linear infinite move-left; /* Adjust timing as desired */
+	}
+</style>
