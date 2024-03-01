@@ -14,11 +14,9 @@
 				slotTrail="place-content-end"
 				background="background-image: url(/zkWilly_Background.png);"
 			>
-				<a href="/" rel="noreferrer"
-					><a href="/" rel="noreferrer">
-						<img src={zkWillyWordmark} alt="zkWilly" class="md:mx-20 w-60 md:w-80" />
-					</a></a
-				>
+				<a href="/" rel="noreferrer">
+					<img src={zkWillyWordmark} alt="zkWilly" class="md:mx-20 w-60 md:w-80" />
+				</a>
 				<svelte:fragment slot="trail">
 					<a
 						href="/about"
