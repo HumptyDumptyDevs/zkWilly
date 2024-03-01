@@ -2,8 +2,6 @@
 	import '../app.postcss';
 	import zkWillyLogo from '../assets/zkWilly_Logo.png';
 	import zkWillyWordmark from '../assets/zkWilly_Wordmark.png';
-	import zkSync_Logo from '../assets/zkSync_Logo.png';
-	import CoinGecko_Logo from '../assets/CoinGecko_Logo.webp';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 </script>
 
@@ -11,21 +9,21 @@
 	<AppShell>
 		<svelte:fragment slot="header">
 			<AppBar
-				gridColumns="grid-cols-2"
+				gridColumns="grid-cols-2 mx-auto md:mx-0"
 				slotDefault="place-self-start"
 				slotTrail="place-content-end"
 				background="background-image: url(/zkWilly_Background.png);"
 			>
 				<a href="/" rel="noreferrer"
 					><a href="/" rel="noreferrer">
-						<img src={zkWillyWordmark} alt="zkWilly" class="mx-20 w-80" />
+						<img src={zkWillyWordmark} alt="zkWilly" class="md:mx-20 w-60 md:w-80" />
 					</a></a
 				>
 				<svelte:fragment slot="trail">
 					<a
 						href="/about"
 						rel="noreferrer"
-						class="btn variant-filled mx-20 font-bold"
+						class="btn btn-sm md:btn-md variant-filled md:mx-20 font-bold"
 						data-sveltekit-preload-data="hover">About</a
 					>
 				</svelte:fragment>
@@ -41,7 +39,9 @@
 								<img src={zkWillyLogo} alt="zkWilly" class="mx-20 w-16" />
 							</a>
 							<p class="text-sm">© 2024 zkWilly</p>
-							<p class="text-sm">@HumptyDumptyDevs</p>
+							<a href="https://x.com/hddevs" rel="noreferrer"
+								><p class="text-sm">@HumptyDumptyDevs</p></a
+							>
 						</div>
 						<div class="flex"></div>
 					</div>

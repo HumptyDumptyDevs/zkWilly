@@ -76,16 +76,22 @@
 
 <main class="container mx-auto w-full">
 	<div class="flex flex-col items-center">
-		<h2 class="h2 text-center text-black pb-4">zkSync Whale Tracker</h2>
-		<p class="text-center pb-6 text-2xl text-black">Follow us on X for alerts</p>
+		<h2 class="h2 text-center text-black font-bold pb-2 md:pb-4 pt-10 md:pt-0">
+			zkSync Whale Tracker
+		</h2>
+		<p class="text-center pb-2 md:pb-6 text-md md:text-lg md:text-2xl text-black">
+			Follow us on X for alerts
+		</p>
 		<a href="https://x.com/zkwilly" rel="noreferrer">
-			<img src={xLogo} alt="zkWilly" class="w-12 mx-10" />
+			<img src={xLogo} alt="zkWilly" class="w-8 md:w-12 mx-10" />
 		</a>
 	</div>
 	<!-- RadioGroup for different time ranges -->
-	<div class="space-x-4 pt-16 pb-2 w-3/4 mx-auto flex justify-between">
-		<div class="flex items-center">
-			<p class="pr-2 text-black font-extrabold">Smaller Fish</p>
+	<div
+		class="space-x-4 pt-8 md:pt-16 pb-2 md:w-3/4 mx-auto flex flex-col items-center md:flex-row md:justify-between"
+	>
+		<div class="flex items-center pb-2 md:pb-0">
+			<p class="pr-2 text-black font-extrabold">All Fish</p>
 			<SlideToggle
 				name="slide"
 				bind:checked={allTxns}
@@ -95,7 +101,13 @@
 				on:click={() => loadData(!allTxns, timeConversionMap.get(timeValue) || 0)}
 			/>
 		</div>
-		<RadioGroup bind:group={timeValue} background="bg-surface-800">
+		<RadioGroup
+			bind:group={timeValue}
+			display="flex"
+			padding="px-2"
+			gap="gap-0"
+			background="bg-surface-800"
+		>
 			<RadioItem
 				bind:group={timeValue}
 				name="time-range"
@@ -134,10 +146,10 @@
 			>
 		</RadioGroup>
 	</div>
-	<div class="table-container w-3/4 mx-auto overflow-y-auto max-h-[400px]">
+	<div class="table-container w-3/4 mx-auto overflow-y-auto max-h-[300px] md:max-h-[400px]">
 		<!-- Native Table Element -->
-		<table class="relative w-full table-hover bg-surface-800 bg-opacity-70">
-			<thead class="sticky top-0 text-xl text-left px-2 bg-surface-800">
+		<table class="relative table-auto w-full text-sm table-hover bg-surface-800 bg-opacity-70">
+			<thead class="sticky top-0 text-sm text-left px-2 bg-surface-800">
 				<tr>
 					<th>Time</th>
 					<th>Txn Hash</th>
