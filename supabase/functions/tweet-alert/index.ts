@@ -13,8 +13,9 @@ Deno.serve(async (req: Request) => {
     let tweetText = "";
 
     const payload: InsertPayload = await req.json();
+    console.log("payload: ", payload);
 
-    if (payload.type === "INSERT" && payload.table === "public.whale_alert") {
+    if (payload.type === "INSERT" && payload.table === "whale_alert") {
       const record = payload.record;
       const usdFormatted = record.valueUsd.toLocaleString("en-US", {
         style: "currency",
@@ -22,9 +23,9 @@ Deno.serve(async (req: Request) => {
       });
 
       switch (record.classification) {
-        case 5:
-          tweetText = `🚨🐋 zkSync Orca Whale Spotted! 🐋🚨\n\n${record.valueEth} ETH (${usdFormatted}) transferred from ${record.fromAddress} to ${record.toAddress}\nhttps://explorer.zksync.io/tx/${record.txnHash}\n\n#zksync #eth #zkwilly #whalealert`;
-          break;
+        // case 5:
+        //   tweetText = `🚨🐋 zkSync Orca Whale Spotted! 🐋🚨\n\n${record.valueEth} ETH (${usdFormatted}) transferred from ${record.fromAddress} to ${record.toAddress}\nhttps://explorer.zksync.io/tx/${record.txnHash}\n\n#zksync #eth #zkwilly #whalealert`;
+        //   break;
         case 6:
           tweetText = `🚨🚨🐋 zkSync Humpback Whale Spotted! 🐋🚨🚨\n\n${record.valueEth} ETH (${usdFormatted}) transferred from ${record.fromAddress} to ${record.toAddress}\nhttps://explorer.zksync.io/tx/${record.txnHash}\n\n#zksync #eth #zkwilly #whalealert`;
           break;
@@ -41,16 +42,20 @@ Deno.serve(async (req: Request) => {
 
     // Post the tweet
     try {
+      console.log("Calling Twitter API...");
+      console.log("tweetText: ", tweetText);
       const response = await fetcher("/2/tweets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: tweetText }),
       });
 
+      console.log("response: ", response);
       return new Response(`Alert posted for ${record.txnHash}!`, {
         status: 200,
       });
     } catch (error) {
+      console.log("Error: ", error);
       return new Response(`Error: ${error.message}`, { status: 500 });
     }
   }
