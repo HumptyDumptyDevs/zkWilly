@@ -3,6 +3,7 @@
 	import zkWillyLogo from '../assets/zkWilly_Logo.png';
 	import zkWillyWordmark from '../assets/zkWilly_Wordmark.png';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import '../lib/web3modal';
 </script>
 
 <main class="mx-auto h-full bg-cover" style="background-image: url(/zkWilly_Background_3.png);">
@@ -18,13 +19,23 @@
 					<img src={zkWillyWordmark} alt="zkWilly" class="md:mx-20 w-60 md:w-80" />
 				</a>
 				<svelte:fragment slot="trail">
-					<a
-						href="/about"
-						rel="noreferrer"
-						class="btn btn-sm md:btn-md variant-filled md:mx-20 font-bold"
-						data-sveltekit-preload-data="hover">About</a
-					>
-				</svelte:fragment>
+					<div class="flex justify-between bg-white p-2 rounded-full">
+						<a
+							href="/nft"
+							rel="noreferrer"
+							class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
+							data-sveltekit-preload-data="hover">NFT</a
+						>
+						<a
+							href="/about"
+							rel="noreferrer"
+							class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
+							data-sveltekit-preload-data="hover">About</a
+						>
+						<w3m-button class="m-1" />
+						<div></div>
+					</div></svelte:fragment
+				>
 			</AppBar>
 		</svelte:fragment>
 		<div class="w-full"><slot /></div>
