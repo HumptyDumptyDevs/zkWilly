@@ -36,12 +36,12 @@
 			{:else}
 				<p>Ho</p>
 			{/if} -->
-			<div class="flex flex-col items-center text-sm">
+			<div class="flex flex-col items-center text-sm py-10">
 				<a
 					href="https://sadanduseless.b-cdn.net/wp-content/uploads/2019/10/puffer-trumps8.jpg"
 					rel="noreferrer"
 				>
-					<img src={mystery} alt="zkWilly" class="w-60 md:w-80 pb-2 md:pb-0 pt-10" />
+					<img src={mystery} alt="zkWilly" class="w-60 md:w-80 pb-2 md:pb-0" />
 				</a>
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
@@ -51,10 +51,14 @@
 					Mint
 				</button>
 				<p class="text-white font-bold text-center pb-2 pt-2 md:pt-2">Price: $20</p>
-				<p class="text-white text-center text-xs pb-2 md:pb-4">(100% donated to Sea Shepherd)</p>
+				<p class="text-white text-center text-xs">
+					(100% donated to <a href="https://seashepherd.org/" class="text-blue-500 underline pb-4"
+						>Sea Shepherd</a
+					>)
+				</p>
 			</div>
 			<div class="flex flex-col justify-center items-center md:py-6 text-sm w-4/5 md:w-2/5">
-				<p class="text-white font-bold text-center pb-2 md:pb-4 pt-6 md:pt-0">Categories</p>
+				<p class="text-white font-bold text-center pb-2 md:pb-4 pt-10 md:pt-0">Categories</p>
 				<p class="text-white text-center text-xs md:text-sm pb-4 md:pb-4 pt-2 md:pt-0">
 					NFTs correspond to the ETH balance of your wallet at the point of mint
 				</p>
@@ -119,7 +123,7 @@
 				</p>
 				<a
 					href="https://media.tenor.com/FawYo00tBekAAAAe/loading-thinking.png"
-					class="text-blue-500 underline pb-4"
+					class="text-blue-500 underline pb-4 md:pb-0"
 					target="_blank"
 				>
 					Contract Details</a

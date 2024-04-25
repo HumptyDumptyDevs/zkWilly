@@ -36,6 +36,7 @@
 		"@wagmi/connectors": "4.1.13",
 		"@wagmi/core": "2.6.4",
 		"@web3modal/wagmi": "4.0.0",
+		"dotenv": "^16.4.5",
 		"ethers": "^6.12.0",
 		"svelte-countdown": "^1.1.2"
 	}
