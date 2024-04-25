@@ -17,36 +17,45 @@
 </script>
 
 <main class="container mx-auto w-full flex-col justify-center items-center">
-	<h2 class="h2 text-center text-black font-bold pb-2 md:pb-4 pt-10 md:pt-0">
+	<h2 class="h2 text-center text-xl md:text-4xl text-black font-bold pt-2 md:pt-2">
 		zkWilly X Sea Shepherd
 	</h2>
-	<h2 class="h2 text-center text-black font-bold pb-4 md:pb-8 pt-10 md:pt-0">Charity NFT</h2>
-	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
-	<Countdown targetDate="2024-04-24T17:40:00" on:timerFinished={handleTimerFinished} />
-	<div class="flex justify-center items-center overflow-y-auto pt-10">
+	<h2 class="h2 text-center text-xl md:text-4xl text-black font-bold pb-4 md:pb-4 md:pt-0">
+		Charity NFT
+	</h2>
+	<Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} />
+	<!-- <Countdown targetDate="2024-04-24T17:40:00" on:timerFinished={handleTimerFinished} /> -->
+	<div
+		class="flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-10 max-h-[500px] md:max-h-[600px]"
+	>
 		<div
-			class="flex justify-center bg-surface-800 bg-opacity-70 w-3/4 gap-32 max-h-[500px] md:max-h-[600px] overflow-y-auto"
+			class="flex flex-col md:flex-row md:justify-center items-center bg-surface-800 bg-opacity-70 w-3/4 md:gap-32 overflow-y-auto"
 		>
 			<!-- {#if $account.isConnected}
 				<p>Hey</p>
 			{:else}
 				<p>Ho</p>
 			{/if} -->
-			<div class="text-sm">
+			<div class="flex flex-col items-center text-sm">
 				<a
 					href="https://sadanduseless.b-cdn.net/wp-content/uploads/2019/10/puffer-trumps8.jpg"
 					rel="noreferrer"
 				>
-					<img src={mystery} alt="zkWilly" class="w-96 pt-10" />
+					<img src={mystery} alt="zkWilly" class="w-60 md:w-80 pb-2 md:pb-0 pt-10" />
 				</a>
-				<p class="text-white text-center pt-4 md:pt-4">10% chance of a rare creature</p>
-				<p class="text-white text-center pb-2 md:pb-2 pt-10 md:pt-0">
-					1% chance of a legendary creature
-				</p>
+				<button
+					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
+					on:click={mintNft}
+					disabled={buttonDisabled}
+				>
+					Mint
+				</button>
+				<p class="text-white font-bold text-center pb-2 pt-2 md:pt-2">Price: $20</p>
+				<p class="text-white text-center text-xs pb-2 md:pb-4">(100% donated to Sea Shepherd)</p>
 			</div>
-			<div class="flex-col justify-center items-center py-6 text-sm w-2/5">
-				<p class="text-white font-bold text-center pb-2 md:pb-4 pt-10 md:pt-0">Categories</p>
-				<p class="text-white text-center pb-2 md:pb-4 pt-10 md:pt-0">
+			<div class="flex flex-col justify-center items-center md:py-6 text-sm w-4/5 md:w-2/5">
+				<p class="text-white font-bold text-center pb-2 md:pb-4 pt-6 md:pt-0">Categories</p>
+				<p class="text-white text-center text-xs md:text-sm pb-4 md:pb-4 pt-2 md:pt-0">
 					NFTs correspond to the ETH balance of your wallet at the point of mint
 				</p>
 
@@ -101,17 +110,20 @@
 						</tr>
 					</tbody>
 				</table>
-				<button
-					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
-					on:click={mintNft}
-					disabled={buttonDisabled}
-				>
-					Mint
-				</button>
-				<p class="text-white font-bold text-center pb-2 pt-2 md:pt-2">Price: $20</p>
-				<p class="text-white text-center pb-2 md:pb-4">
-					(100% of proceeds donated to Sea Shepherd)
+
+				<p class="text-white text-center text-xs md:text-sm pt-4 md:pt-4">
+					10% chance of a rare creature
 				</p>
+				<p class="text-white text-center text-xs md:text-sm pb-2 md:pb-2 pt-2 md:pt-0">
+					1% chance of a legendary creature
+				</p>
+				<a
+					href="https://media.tenor.com/FawYo00tBekAAAAe/loading-thinking.png"
+					class="text-blue-500 underline pb-4"
+					target="_blank"
+				>
+					Contract Details</a
+				>
 			</div>
 		</div>
 	</div>

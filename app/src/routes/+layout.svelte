@@ -10,34 +10,43 @@
 	<AppShell>
 		<svelte:fragment slot="header">
 			<AppBar
-				gridColumns="grid-cols-2 mx-auto md:mx-0"
+				gridColumns="grid-cols-1 md:grid-cols-2 mx-auto md:mx-0"
 				slotDefault="place-self-start"
-				slotTrail="place-content-end"
+				slotTrail="place-content-start md:place-content-end"
 				background="background-image: url(/zkWilly_Background.png);"
 			>
-				<a href="/" rel="noreferrer">
+				<a href="/" rel="noreferrer" class="hidden md:block">
 					<img src={zkWillyWordmark} alt="zkWilly" class="md:mx-20 w-60 md:w-80" />
 				</a>
 				<svelte:fragment slot="trail">
-					<div class="flex justify-between bg-white p-2 rounded-full">
-						<a
-							href="/nft"
-							rel="noreferrer"
-							class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
-							data-sveltekit-preload-data="hover">NFT</a
-						>
-						<a
-							href="/about"
-							rel="noreferrer"
-							class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
-							data-sveltekit-preload-data="hover">About</a
-						>
-						<w3m-button class="m-1" />
-						<div></div>
-					</div></svelte:fragment
-				>
+					<div class="flex flex-col justify-center items-center md:mx-20">
+						<div class="flex items-center bg-white p-2 rounded-full">
+							<a
+								href="/"
+								rel="noreferrer"
+								class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold block md:hidden"
+								data-sveltekit-preload-data="hover">Home</a
+							>
+							<a
+								href="/nft"
+								rel="noreferrer"
+								class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
+								data-sveltekit-preload-data="hover">NFT</a
+							>
+							<a
+								href="/about"
+								rel="noreferrer"
+								class="btn btn-sm md:btn-md variant-filled-secondary m-1 font-bold"
+								data-sveltekit-preload-data="hover">About</a
+							>
+							<w3m-button class="hidden md:block m-1" />
+						</div>
+						<w3m-button class="block md:hidden m-2" />
+					</div>
+				</svelte:fragment>
 			</AppBar>
 		</svelte:fragment>
+
 		<div class="w-full"><slot /></div>
 		<svelte:fragment slot="pageFooter">
 			<main class="container mx-auto w-full">
