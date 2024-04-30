@@ -1,18 +1,31 @@
 <script lang="ts">
 	import '../../app.postcss';
 	import '../../lib/web3modal';
+	import { onMount } from 'svelte';
 	import Countdown from './Countdown.svelte';
 	import mystery from '../../assets/mystery_fish.png';
 	import { account } from '$lib/web3modal';
+	import { mintNft } from '$lib/web3modal';
 
-	let buttonDisabled = true;
+	let targetDate = '2024-04-30T11:12:00';
+	let timerFinished = false;
 
 	function handleTimerFinished() {
-		buttonDisabled = false;
+		timerFinished = true;
 	}
 
-	function mintNft() {
+	onMount(() => {
+		const currentTime = new Date().getTime();
+		const targetTime = new Date(targetDate).getTime();
+
+		if (currentTime >= targetTime) {
+			handleTimerFinished();
+		}
+	});
+
+	function mint() {
 		console.log('Minting NFT');
+		mintNft();
 	}
 </script>
 
@@ -23,8 +36,8 @@
 	<h2 class="h2 text-center text-xl md:text-4xl text-black font-bold pb-4 md:pb-4 md:pt-0">
 		Charity NFT
 	</h2>
-	<Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} />
-	<!-- <Countdown targetDate="2024-04-24T17:40:00" on:timerFinished={handleTimerFinished} /> -->
+	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
+	<Countdown {targetDate} on:timerFinished={handleTimerFinished} />
 	<div
 		class="flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-10 max-h-[500px] md:max-h-[600px]"
 	>
@@ -45,8 +58,8 @@
 				</a>
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
-					on:click={mintNft}
-					disabled={buttonDisabled}
+					on:click={mint}
+					disabled={!($account.isConnected && timerFinished)}
 				>
 					Mint
 				</button>

@@ -22,6 +22,8 @@ contract ZKWillyNFT is ERC721, Ownable {
     uint256 private s_nonce;
     AggregatorV3Interface private s_priceFeed;
 
+    // address payable public seaShepherdWallet;
+
     enum WhaleType {
         PLANKTON,
         SHINY_PLANKTON,
@@ -52,7 +54,11 @@ contract ZKWillyNFT is ERC721, Ownable {
     constructor(
         string[] memory initWhaleURIs,
         address priceFeed
-    ) ERC721("zkWillyNFT", "WILLY") Ownable() {
+    )
+        // address payable _seaShepherdWallet
+        ERC721("zkWillyNFT", "WILLY")
+        Ownable()
+    {
         if (initWhaleURIs.length != 21) {
             revert ZKWillyNFT__NotEnoughWhales();
         }
@@ -62,6 +68,7 @@ contract ZKWillyNFT is ERC721, Ownable {
         s_priceFeed = AggregatorV3Interface(priceFeed);
         s_nonce = 0;
         s_tokenCounter = 1;
+        // seaShepherdWallet = _seaShepherdWallet;
     }
 
     function mintNFT() public payable {
@@ -78,6 +85,9 @@ contract ZKWillyNFT is ERC721, Ownable {
         _safeMint(msg.sender, s_tokenCounter);
         s_tokenIdToWhale[s_tokenCounter] = whaleType;
         s_tokenCounter++;
+
+        // (bool success, ) = seaShepherdWallet.call{value: msg.value}("");
+        // require(success, "Failed to send ETH to designated address");
     }
 
     function getPsuedoRandomNumber(uint8 modulus) private returns (uint8) {
