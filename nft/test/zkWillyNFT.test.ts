@@ -8,7 +8,7 @@ import {
   getRandomWallet,
 } from "../deploy/utils";
 import { whaleTypes } from "../deploy/helperConfig";
-import * as hre from "hardhat";
+import hre from "hardhat";
 import { ethers } from "ethers";
 
 describe("ZKWillyNFT Minting", function () {

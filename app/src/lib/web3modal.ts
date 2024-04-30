@@ -7,6 +7,7 @@ import {
 	watchChainId,
 	writeContract
 } from '@wagmi/core';
+import { parseEther } from 'viem';
 import { readable, writable } from 'svelte/store';
 import { abi } from './zkWillyNftAbi';
 import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
@@ -86,12 +87,17 @@ export const customWallet = writable({
 export const supported_chains = writable<string[]>([]);
 
 export const mintNft = async () => {
-	const tx = await writeContract(wagmiConfig, {
-		abi,
-		address: PUBLIC_NFT_CONTRACT_ADDRESS,
-		functionName: 'mintNFT',
-		args: []
-	});
-
-	console.log('mintNFT tx', tx);
+	try {
+		const tx = await writeContract(wagmiConfig, {
+			abi,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			functionName: 'mintNFT',
+			args: [],
+			value: parseEther('0.01') // Assuming 0.02 ETH price
+		});
+		console.log('mintNFT tx', tx);
+	} catch (error) {
+		console.error('Error in mintNft:', error);
+		// Handle the error appropriately for the user
+	}
 };

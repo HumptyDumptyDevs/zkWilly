@@ -9,6 +9,7 @@
 
 	let targetDate = '2024-04-30T11:12:00';
 	let timerFinished = false;
+	let isMinting = false;
 
 	function handleTimerFinished() {
 		timerFinished = true;
@@ -25,7 +26,8 @@
 
 	function mint() {
 		console.log('Minting NFT');
-		mintNft();
+		isMinting = true; // Start loading indicator
+		mintNft().finally(() => (isMinting = false)); // Stop loading indicator
 	}
 </script>
 
@@ -59,9 +61,13 @@
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
 					on:click={mint}
-					disabled={!($account.isConnected && timerFinished)}
+					disabled={!($account.isConnected && timerFinished) || isMinting}
 				>
-					Mint
+					{#if isMinting}
+						Minting...
+					{:else}
+						Mint
+					{/if}
 				</button>
 				<p class="text-white font-bold text-center pb-2 pt-2 md:pt-2">Price: $20</p>
 				<p class="text-white text-center text-xs">

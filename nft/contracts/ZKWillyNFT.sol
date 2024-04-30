@@ -7,9 +7,10 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
+import "hardhat/console.sol";
 
 contract ZKWillyNFT is ERC721, Ownable {
-    using PriceConverter for uint256;
+    using PriceConverter for *;
 
     error ZKWillyNFT__NotEnoughETHSent();
     error ZKWillyNFT__NotEnoughWhales();
@@ -76,7 +77,7 @@ contract ZKWillyNFT is ERC721, Ownable {
             revert ZKWillyNFT__MaxTokensMinted();
         }
 
-        if (msg.value.getConversionRate(s_priceFeed) < MINIMUM_USD) {
+        if (msg.value < getEthPrice()) {
             revert ZKWillyNFT__NotEnoughETHSent();
         }
 
@@ -146,6 +147,11 @@ contract ZKWillyNFT is ERC721, Ownable {
 
     function getTotalTokenCount() public view returns (uint256) {
         return s_tokenCounter - 1;
+    }
+
+    function getEthPrice() public view returns (uint256) {
+        console.log("Hit getEthPrice");
+        return PriceConverter.getPriceInEth(s_priceFeed, MINIMUM_USD);
     }
 
     function tokenURI(
