@@ -77,7 +77,7 @@
 						</tr>
 						<tr>
 							<td>&lt 0.2</td>
-							<td>?</td>
+							<td>Shrimp</td>
 						</tr>
 						<tr>
 							<td>&lt 0.5</td>
