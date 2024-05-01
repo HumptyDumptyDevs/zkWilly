@@ -1,12 +1,7 @@
 import { expect } from "chai";
 import deploy from "../deploy/deploy";
-import { Contract, Wallet, Provider } from "zksync-ethers";
-import {
-  getWallet,
-  deployContract,
-  LOCAL_RICH_WALLETS,
-  getRandomWallet,
-} from "../deploy/utils";
+import { Contract, Wallet } from "zksync-ethers";
+import { getRandomWallet } from "../deploy/utils";
 import { whaleTypes } from "../deploy/helperConfig";
 import hre from "hardhat";
 import { ethers } from "ethers";
@@ -29,6 +24,7 @@ describe("ZKWillyNFT Minting", function () {
   });
 
   it("It shouldn't mint a new NFT if the recipient doesn't send enough ETH", async function () {
+    console.log("$20 in ETH: ", await nftContract.getEthPrice());
     await expect(
       nftContract.mintNFT({
         value: ethers.parseEther("0.00001"),

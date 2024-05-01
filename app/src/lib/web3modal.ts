@@ -5,9 +5,10 @@ import {
 	reconnect,
 	watchAccount,
 	watchChainId,
-	writeContract
+	readContract,
+	writeContract,
+	waitForTransactionReceipt
 } from '@wagmi/core';
-import { parseEther } from 'viem';
 import { readable, writable } from 'svelte/store';
 import { abi } from './zkWillyNftAbi';
 import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
@@ -88,16 +89,39 @@ export const supported_chains = writable<string[]>([]);
 
 export const mintNft = async () => {
 	try {
+		const price = await readContract(wagmiConfig, {
+			abi,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			functionName: 'getEthPrice'
+		});
+
 		const tx = await writeContract(wagmiConfig, {
 			abi,
 			address: PUBLIC_NFT_CONTRACT_ADDRESS,
 			functionName: 'mintNFT',
 			args: [],
-			value: parseEther('0.01') // Assuming 0.02 ETH price
+			value: price
 		});
 		console.log('mintNFT tx', tx);
+
+		// Wait for confirmation
+		const txReceipt = await waitForTransactionReceipt(wagmiConfig, { hash: tx });
+		console.log('Transaction receipt:', txReceipt);
+
+		// Check transaction status
+		if (txReceipt.status === 1) {
+			// 1 indicates a successful transaction
+			// Return success response
+			return { success: true, message: 'NFT minted successfully' };
+		} else {
+			// Return error response (consider more detailed error info if possible)
+			return { success: false, message: 'Transaction failed' };
+		}
 	} catch (error) {
 		console.error('Error in mintNft:', error);
-		// Handle the error appropriately for the user
+		return {
+			success: false,
+			message: 'An error occurred during minting. Please check the console for details.'
+		};
 	}
 };
