@@ -15,7 +15,9 @@ contract ZKWillyNFT is ERC721, Ownable {
     error ZKWillyNFT__NotEnoughWhales();
     error ZKWillyNFT__MaxTokensMinted();
 
-    uint256 public constant MINIMUM_USD = 20e18;
+    event NFTMinted(address indexed minter, uint256 indexed tokenId);
+
+    uint256 public constant MINIMUM_USD = 1e18;
     uint256 public constant MAX_TOKENS = 2500;
 
     uint256 private s_tokenCounter;
@@ -80,6 +82,8 @@ contract ZKWillyNFT is ERC721, Ownable {
             revert ZKWillyNFT__NotEnoughETHSent();
         }
 
+        uint256 tokenId = s_tokenCounter;
+
         uint8 chance = getPsuedoRandomNumber(100);
         WhaleType whaleType = determineWhaleType(chance, msg.sender.balance);
         _safeMint(msg.sender, s_tokenCounter);
@@ -88,6 +92,8 @@ contract ZKWillyNFT is ERC721, Ownable {
 
         // (bool success, ) = seaShepherdWallet.call{value: msg.value}("");
         // require(success, "Failed to send ETH to designated address");
+
+        emit NFTMinted(msg.sender, tokenId);
     }
 
     function getPsuedoRandomNumber(uint8 modulus) private returns (uint8) {

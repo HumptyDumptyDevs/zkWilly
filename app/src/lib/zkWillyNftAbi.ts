@@ -86,6 +86,25 @@ export const abi = [
 			{
 				indexed: true,
 				internalType: 'address',
+				name: 'minter',
+				type: 'address'
+			},
+			{
+				indexed: true,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256'
+			}
+		],
+		name: 'NFTMinted',
+		type: 'event'
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
 				name: 'previousOwner',
 				type: 'address'
 			},

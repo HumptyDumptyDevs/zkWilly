@@ -109,10 +109,10 @@ export const mintNft = async () => {
 		console.log('Transaction receipt:', txReceipt);
 
 		// Check transaction status
-		if (txReceipt.status === 1) {
+		if (txReceipt.status === 'success') {
 			// 1 indicates a successful transaction
 			// Return success response
-			return { success: true, message: 'NFT minted successfully' };
+			return { success: true, message: 'NFT minted successfully', txHash: tx };
 		} else {
 			// Return error response (consider more detailed error info if possible)
 			return { success: false, message: 'Transaction failed' };
@@ -121,7 +121,29 @@ export const mintNft = async () => {
 		console.error('Error in mintNft:', error);
 		return {
 			success: false,
-			message: 'An error occurred during minting. Please check the console for details.'
+			message: 'Error minting. Please try again.'
 		};
+	}
+};
+
+export const getTokenImage = async (tokenId) => {
+	try {
+		const uri = await readContract(wagmiConfig, {
+			abi,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			functionName: 'tokenURI',
+			args: [tokenId]
+		});
+
+		console.log('Token URI for %s is: %s', tokenId, uri);
+
+		const ipfsToLocalImageMap = {
+			'ipfs://bafybeibezlp2riqhpvj3qphx6ylzcvm3si3logkh5zqwdbuy4qb2ytrtjq/': 'plankton-standard'
+		};
+
+		return ipfsToLocalImageMap[uri]; // Return local image path
+	} catch (error) {
+		console.error('Error in getTokenUri:', error);
+		return;
 	}
 };

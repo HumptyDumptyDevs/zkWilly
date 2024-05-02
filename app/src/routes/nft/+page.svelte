@@ -1,15 +1,32 @@
 <script lang="ts">
 	import '../../app.postcss';
-	import '../../lib/web3modal';
+	import '$lib/web3modal';
+	import { abi } from '$lib/zkWillyNftAbi';
 	import { onMount } from 'svelte';
+	import { type ModalSettings } from '@skeletonlabs/skeleton';
 	import Countdown from './Countdown.svelte';
 	import mystery from '../../assets/mystery_fish.png';
-	import { account } from '$lib/web3modal';
-	import { mintNft } from '$lib/web3modal';
+	import planktonStandard from '../../assets/plankton-standard.png';
+	import { watchContractEvent, getAccount } from '@wagmi/core';
+	import { account, mintNft, getTokenImage, wagmiConfig } from '$lib/web3modal';
+	import { getModalStore } from '@skeletonlabs/skeleton';
+	import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
+
+	// Stores
+	const modalStore = getModalStore();
+
+	const modal: ModalSettings = {
+		type: 'alert',
+		// Data
+		title: 'Mint Successful!', // Default title
+		body: 'You have successfully minted your NFT.', // Default body
+		image: 'https://i.imgur.com/WOgTG96.gif'
+	};
 
 	let targetDate = '2024-04-30T11:12:00';
 	let timerFinished = false;
 	let isMinting = false;
+	let errorMessage = null;
 
 	function handleTimerFinished() {
 		timerFinished = true;
@@ -24,10 +41,60 @@
 		}
 	});
 
-	function mint() {
+	async function mint() {
+		// Update mint function
 		console.log('Minting NFT');
-		isMinting = true; // Start loading indicator
-		mintNft().finally(() => (isMinting = false)); // Stop loading indicator
+		isMinting = true;
+		errorMessage = null;
+
+		const unwatch = watchContractEvent(wagmiConfig, {
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			abi,
+			eventName: 'NFTMinted',
+			args: { minter: getAccount(wagmiConfig).address },
+			async onLogs(logs) {
+				console.log('Mint event caught!', logs);
+
+				// Get tokenId from event
+				const tokenId = logs[0].args.tokenId;
+				const tokenImage = await getTokenImage(tokenId);
+
+				switch (tokenImage) {
+					case 'plankton-standard':
+						modal.image = planktonStandard;
+						break;
+					default:
+						modal.image = planktonStandard;
+						break;
+				}
+
+				// Update modal data based on mint success
+				modal.title = 'Mint Successful!';
+				modal.body = `You have successfully minted your NFT. View it on 
+                    <a href="https://sepolia-era.zksync.network/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank">
+                        ZkSync Explorer
+                    </a>`; // TODO: Dynamically update block explorer
+
+				// Trigger modal
+				modalStore.trigger(modal);
+				isMinting = false;
+
+				unwatch();
+			}
+		});
+
+		try {
+			const response = await mintNft();
+
+			if (!response.success) {
+				isMinting = false;
+				errorMessage = response.message;
+			}
+		} catch (error) {
+			isMinting = false;
+			errorMessage = 'Mint error. Please try again.';
+			console.error('Error in mint:', error);
+		}
 	}
 </script>
 
@@ -51,12 +118,12 @@
 			{:else}
 				<p>Ho</p>
 			{/if} -->
-			<div class="flex flex-col items-center text-sm py-10">
+			<div class="flex flex-col items-center text-sm py-10 w-1/3">
 				<a
 					href="https://sadanduseless.b-cdn.net/wp-content/uploads/2019/10/puffer-trumps8.jpg"
 					rel="noreferrer"
 				>
-					<img src={mystery} alt="zkWilly" class="w-60 md:w-80 pb-2 md:pb-0" />
+					<img src={mystery} alt="zkWilly" class="w-60 md:w-full pb-2 md:pb-0" />
 				</a>
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
@@ -69,6 +136,11 @@
 						Mint
 					{/if}
 				</button>
+				{#if errorMessage}
+					<p class="text-red-500 text-sm font-bold">
+						{errorMessage}
+					</p>
+				{/if}
 				<p class="text-white font-bold text-center pb-2 pt-2 md:pt-2">Price: $20</p>
 				<p class="text-white text-center text-xs">
 					(100% donated to <a href="https://seashepherd.org/" class="text-blue-500 underline pb-4"
