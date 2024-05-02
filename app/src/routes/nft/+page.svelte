@@ -81,7 +81,7 @@
 						</tr>
 						<tr>
 							<td>&lt 0.5</td>
-							<td>?</td>
+							<td>Pufferfish</td>
 						</tr>
 						<tr>
 							<td>&lt 1</td>
