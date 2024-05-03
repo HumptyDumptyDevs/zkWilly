@@ -35,6 +35,17 @@ describe("ZKWillyNFT Minting", function () {
     );
   });
 
+  it("Testing $1", async function () {
+    //ETH is $4000
+    //$1 worth of ETH is 0.00025
+    const tx = await nftContract.mintNFT({
+      value: ethers.parseEther("0.0003"),
+    });
+    await tx.wait();
+    const balance = await nftContract.balanceOf(deployerWallet.address);
+    expect(balance).to.equal(BigInt("1"));
+  });
+
   it("Should have correct token URI after minting", async function () {
     const tokenId = 1; // Assuming the first token minted has ID 1
     const tokenURI = await nftContract.tokenURI(tokenId);

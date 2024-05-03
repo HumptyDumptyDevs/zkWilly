@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let targetDate;
-	let amountMinted = 0;
+	export let amountMinted = 0;
 
 	// Calculate remaining time in milliseconds
 	let remainingTime = new Date(targetDate).getTime() - Date.now();

@@ -126,7 +126,7 @@ export const mintNft = async () => {
 	}
 };
 
-export const getTokenImage = async (tokenId) => {
+export const getTokenUri = async (tokenId) => {
 	try {
 		const uri = await readContract(wagmiConfig, {
 			abi,
@@ -137,11 +137,7 @@ export const getTokenImage = async (tokenId) => {
 
 		console.log('Token URI for %s is: %s', tokenId, uri);
 
-		const ipfsToLocalImageMap = {
-			'ipfs://bafybeibezlp2riqhpvj3qphx6ylzcvm3si3logkh5zqwdbuy4qb2ytrtjq/': 'plankton-standard'
-		};
-
-		return ipfsToLocalImageMap[uri]; // Return local image path
+		return uri; // Return local image path
 	} catch (error) {
 		console.error('Error in getTokenUri:', error);
 		return;

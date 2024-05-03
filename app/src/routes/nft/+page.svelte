@@ -3,17 +3,39 @@
 	import '$lib/web3modal';
 	import { abi } from '$lib/zkWillyNftAbi';
 	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { type ModalSettings } from '@skeletonlabs/skeleton';
 	import Countdown from './Countdown.svelte';
 	import mystery from '../../assets/mystery_fish.png';
-	import planktonStandard from '../../assets/plankton-standard.png';
+	import planktonStandard from '../../assets/nft/plankton-standard.png';
+	import planktonShiny from '../../assets/nft/plankton-shiny.png';
+	import shrimpStandard from '../../assets/nft/shrimp-standard.png';
+	import shrimpShiny from '../../assets/nft/shrimp-shiny.png';
+	import pufferfishStandard from '../../assets/nft/pufferfish-standard.png';
+	import pufferfishShiny from '../../assets/nft/pufferfish-shiny.png';
+	import dolphinStandard from '../../assets/nft/dolphin-standard.png';
+	import dolphinShiny from '../../assets/nft/dolphin-shiny.png';
+	import belugaStandard from '../../assets/nft/beluga-standard.png';
+	import belugaShiny from '../../assets/nft/beluga-shiny.png';
+	import narwhalStandard from '../../assets/nft/narwhal-standard.png';
+	import narwhalShiny from '../../assets/nft/narwhal-shiny.png';
+	import orcaStandard from '../../assets/nft/orca-standard.png';
+	import orcaShiny from '../../assets/nft/orca-shiny.png';
+	import humpbackStandard from '../../assets/nft/humpback-standard.png';
+	import humpbackShiny from '../../assets/nft/humpback-shiny.png';
+	import spermStandard from '../../assets/nft/sperm-standard.png';
+	import spermShiny from '../../assets/nft/sperm-shiny.png';
+	import blueWhaleStandard from '../../assets/nft/blue-whale-standard.png';
+	import blueWhaleShiny from '../../assets/nft/blue-whale-shiny.png';
+	import goldenWilly from '../../assets/nft/golden-willy.png';
 	import { watchContractEvent, getAccount } from '@wagmi/core';
-	import { account, mintNft, getTokenImage, wagmiConfig } from '$lib/web3modal';
+	import { account, mintNft, getTokenUri, wagmiConfig } from '$lib/web3modal';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
 
 	// Stores
 	const modalStore = getModalStore();
+	let amountMinted = writable(0);
 
 	const modal: ModalSettings = {
 		type: 'alert',
@@ -57,29 +79,48 @@
 
 				// Get tokenId from event
 				const tokenId = logs[0].args.tokenId;
-				const tokenImage = await getTokenImage(tokenId);
+				const tokenUri = await getTokenUri(tokenId);
 
-				switch (tokenImage) {
-					case 'plankton-standard':
-						modal.image = planktonStandard;
-						break;
-					default:
-						modal.image = planktonStandard;
-						break;
-				}
+				const ipfsToLocalImageMap = {
+					'ipfs://QmY4TJEBNdARPwfXBvL2HhKsQf36PjUGokz2wksd5oF5ah/': planktonStandard,
+					'ipfs://QmWDScpviJzPzD8WhEday1GjVTMMiQF3UNtP5aDqPh6oxT/': planktonShiny,
+					'ipfs://Qma5DPMj4XeihW6mvuGuqUbjkbLeSJUWsHqGkBX98Qnkeg/': shrimpStandard,
+					'ipfs://QmcW2z6UfXQcV1n9zt9fQCiUPNqop8tvCGmuTtMMR84ZkF/': shrimpShiny,
+					'ipfs://QmaBDxQgh9vRRqswacic6tAZgfjnu5Ci9uY2krzBZf4GVB/': pufferfishStandard,
+					'ipfs://QmedpgVF91HHdWXN1yn9v5PMVPdoee6627ANaBVbmWRQTX/': pufferfishShiny,
+					'ipfs://QmV1mtATyJ8s6Z6Z2uukVtDxa1vo9rduEz6aXY5D1UYgWh/': dolphinStandard,
+					'ipfs://QmSPaNzEYQKd6t7a3idMsLf2tba7sdPJraRfPk2LZtKoRh/': dolphinShiny,
+					'ipfs://Qmd1A3nS9BaSRhrFmSA7hoS86qaAZ1MTfEKVAMdQ9uwYwv/': belugaStandard,
+					'ipfs://QmXVbcKt2VCPkZmV2aKwBdPx6PBch9Uv7dRPmW8SC8qGjD/': belugaShiny,
+					'ipfs://QmXaMHiJUXBg4Kq1eozmashFdLS1kHkiFKgAdXz13dqSMC/': narwhalStandard,
+					'ipfs://QmRyxrqQgLSAVXs4b2T3k5ubBgjT5NE8UF2sExWFimdxWA/': narwhalShiny,
+					'ipfs://Qmf5mH5fSwe8Q72g2eagJaHBUHQxgsyyMFZqkDGCs3dcaZ/': orcaStandard,
+					'ipfs://QmViHFvfytZR95txpUf38G9YJV2BuX2ThH5UaGcdJMstgN/': orcaShiny,
+					'ipfs://QmTQFQVUFTNscWvptfC5m3ZHNZ4d8cc8WiRuYBbmXrUpCE/': humpbackStandard,
+					'ipfs://QmNgxr5tYhpkUmVzvRnpzGuvYpFdBvMXNasC4MHAtZ2xfo/': humpbackShiny,
+					'ipfs://QmQdGNx8ZCdegtvHzvFykZWmgYKNB6dH9Tqg3E39YtuBEz/': spermStandard,
+					'ipfs://QmPRkvqRBmpZAcGoML8Secxng3CFwipQiP13Hj7iray7HP/': spermShiny,
+					'ipfs://QmPA7KZAaSSxuaeAWjLpCpJZpiry16tZgEtEwy1UhBrXgX/': blueWhaleStandard,
+					'ipfs://QmdGKySFeWNpqgsij2vGiHiZU1qYbqevyjgrnmcydecNNe/': blueWhaleShiny,
+					'ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/': goldenWilly
+				};
 
 				// Update modal data based on mint success
 				modal.title = 'Mint Successful!';
-				modal.body = `You have successfully minted your NFT. View it on 
-                    <a href="https://sepolia-era.zksync.network/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank">
+				modal.body = `You have successfully minted your NFT. 
+				View it on 
+                    <a href="https://sepolia-era.zksync.network/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank" style="color: blue; text-decoration: underline;">
                         ZkSync Explorer
                     </a>`; // TODO: Dynamically update block explorer
+				modal.image = ipfsToLocalImageMap[tokenUri];
 
 				// Trigger modal
 				modalStore.trigger(modal);
-				isMinting = false;
-
 				unwatch();
+
+				isMinting = false;
+				amountMinted.update((n) => n + 1);
+				console.log('Amount minted:', $amountMinted);
 			}
 		});
 
@@ -106,18 +147,13 @@
 		Charity NFT
 	</h2>
 	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
-	<Countdown {targetDate} on:timerFinished={handleTimerFinished} />
+	<Countdown {targetDate} on:timerFinished={handleTimerFinished} {$amountMinted} />
 	<div
 		class="flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-10 max-h-[500px] md:max-h-[600px]"
 	>
 		<div
 			class="flex flex-col md:flex-row md:justify-center items-center bg-surface-800 bg-opacity-70 w-3/4 md:gap-32 overflow-y-auto"
 		>
-			<!-- {#if $account.isConnected}
-				<p>Hey</p>
-			{:else}
-				<p>Ho</p>
-			{/if} -->
 			<div class="flex flex-col items-center text-sm py-10 w-1/3">
 				<a
 					href="https://sadanduseless.b-cdn.net/wp-content/uploads/2019/10/puffer-trumps8.jpg"

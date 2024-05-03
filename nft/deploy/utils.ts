@@ -119,14 +119,14 @@ export const deployContract = async (
     });
 
   // Estimate contract deployment fee
-  const deploymentFee = await deployer.estimateDeployFee(
-    artifact,
-    constructorArguments || []
-  );
-  log(`Estimated deployment cost: ${ethers.formatEther(deploymentFee)} ETH`);
+  // const deploymentFee = await deployer.estimateDeployFee(
+  //   artifact,
+  //   constructorArguments || []
+  // );
+  // log(`Estimated deployment cost: ${ethers.formatEther(deploymentFee)} ETH`);
 
-  // Check if the wallet has enough balance
-  await verifyEnoughBalance(wallet, deploymentFee);
+  // // Check if the wallet has enough balance
+  // await verifyEnoughBalance(wallet, deploymentFee);
 
   // Deploy the contract to zkSync
   const contract = await deployer.deploy(artifact, constructorArguments);
