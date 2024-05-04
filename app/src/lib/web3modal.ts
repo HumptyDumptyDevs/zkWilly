@@ -143,3 +143,18 @@ export const getTokenUri = async (tokenId) => {
 		return;
 	}
 };
+
+export const getAmountMinted = async () => {
+	try {
+		const amountMinted = await readContract(wagmiConfig, {
+			abi,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			functionName: 'getTotalTokenCount'
+		});
+
+		return Number(amountMinted);
+	} catch (error) {
+		console.error('Error in getAmountMinted:', error);
+		return;
+	}
+};

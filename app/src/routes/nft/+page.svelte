@@ -29,7 +29,7 @@
 	import blueWhaleShiny from '../../assets/nft/blue-whale-shiny.png';
 	import goldenWilly from '../../assets/nft/golden-willy.png';
 	import { watchContractEvent, getAccount } from '@wagmi/core';
-	import { account, mintNft, getTokenUri, wagmiConfig } from '$lib/web3modal';
+	import { account, mintNft, getTokenUri, getAmountMinted, wagmiConfig } from '$lib/web3modal';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
 
@@ -54,14 +54,22 @@
 		timerFinished = true;
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		// Using onMount to trigger the async actions
+		await initializeOnMount();
+	});
+
+	async function initializeOnMount() {
 		const currentTime = new Date().getTime();
 		const targetTime = new Date(targetDate).getTime();
 
 		if (currentTime >= targetTime) {
 			handleTimerFinished();
+			// Using $amountMinted.set here to update the store's value
+			$amountMinted = await getAmountMinted();
+			console.log('Amount minted:', $amountMinted);
 		}
-	});
+	}
 
 	async function mint() {
 		// Update mint function
@@ -119,8 +127,7 @@
 				unwatch();
 
 				isMinting = false;
-				amountMinted.update((n) => n + 1);
-				console.log('Amount minted:', $amountMinted);
+				$amountMinted = await getAmountMinted();
 			}
 		});
 
@@ -147,7 +154,7 @@
 		Charity NFT
 	</h2>
 	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
-	<Countdown {targetDate} on:timerFinished={handleTimerFinished} {$amountMinted} />
+	<Countdown {targetDate} on:timerFinished={handleTimerFinished} {amountMinted} />
 	<div
 		class="flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-10 max-h-[500px] md:max-h-[600px]"
 	>

@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let targetDate;
-	export let amountMinted = 0;
+	export let amountMinted;
 
 	// Calculate remaining time in milliseconds
 	let remainingTime = new Date(targetDate).getTime() - Date.now();
@@ -33,7 +33,7 @@
 		</div>
 	{:else}
 		<div class="flex justify-center timer text-black font-bold">
-			{amountMinted} / 2500
+			{$amountMinted} / 2500
 		</div>
 	{/if}
 </main>
