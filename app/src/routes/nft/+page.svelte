@@ -89,7 +89,7 @@
 						</tr>
 						<tr>
 							<td>&lt 3</td>
-							<td>?</td>
+							<td>Beluga Whale</td>
 						</tr>
 
 						<tr>
