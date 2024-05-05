@@ -94,7 +94,7 @@
 
 						<tr>
 							<td>&lt 5</td>
-							<td>?</td>
+							<td>Narwhal</td>
 						</tr>
 						<tr>
 							<td>&lt 10</td>
