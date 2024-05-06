@@ -98,7 +98,7 @@
 						</tr>
 						<tr>
 							<td>&lt 10</td>
-							<td>?</td>
+							<td>Orca</td>
 						</tr>
 						<tr>
 							<td>&lt 20</td>
