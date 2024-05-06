@@ -47,11 +47,19 @@
 
 	let targetDate = '2024-04-30T11:12:00';
 	let timerFinished = false;
+	let maxTokensMinted = false;
 	let isMinting = false;
 	let errorMessage = null;
 
 	function handleTimerFinished() {
 		timerFinished = true;
+	}
+
+	function handleMaxTokensMinted() {
+		maxTokensMinted = true;
+		// console.log('Max tokens minted', maxTokensMinted);
+		// console.log('account connected', $account.isConnected);
+		// console.log('timer finished', timerFinished);
 	}
 
 	onMount(async () => {
@@ -69,6 +77,17 @@
 			$amountMinted = await getAmountMinted();
 			console.log('Amount minted:', $amountMinted);
 		}
+
+		watchContractEvent(wagmiConfig, {
+			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			abi,
+			eventName: 'NFTMinted',
+			async onLogs(logs) {
+				console.log('Mint event caught!', logs);
+
+				$amountMinted = await getAmountMinted();
+			}
+		});
 	}
 
 	async function mint() {
@@ -77,13 +96,13 @@
 		isMinting = true;
 		errorMessage = null;
 
-		const unwatch = watchContractEvent(wagmiConfig, {
+		const unwatchSelfMint = watchContractEvent(wagmiConfig, {
 			address: PUBLIC_NFT_CONTRACT_ADDRESS,
 			abi,
 			eventName: 'NFTMinted',
 			args: { minter: getAccount(wagmiConfig).address },
 			async onLogs(logs) {
-				console.log('Mint event caught!', logs);
+				console.log('Self Mint event caught!', logs);
 
 				// Get tokenId from event
 				const tokenId = logs[0].args.tokenId;
@@ -124,7 +143,7 @@
 
 				// Trigger modal
 				modalStore.trigger(modal);
-				unwatch();
+				unwatchSelfMint();
 
 				isMinting = false;
 				$amountMinted = await getAmountMinted();
@@ -154,7 +173,12 @@
 		Charity NFT
 	</h2>
 	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
-	<Countdown {targetDate} on:timerFinished={handleTimerFinished} {amountMinted} />
+	<Countdown
+		{targetDate}
+		on:timerFinished={handleTimerFinished}
+		on:maxTokensMinted={handleMaxTokensMinted}
+		{amountMinted}
+	/>
 	<div
 		class="flex flex-col md:flex-row justify-center items-center overflow-y-auto pt-10 max-h-[500px] md:max-h-[600px]"
 	>
@@ -171,7 +195,7 @@
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
 					on:click={mint}
-					disabled={!($account.isConnected && timerFinished) || isMinting}
+					disabled={!($account.isConnected && timerFinished && !maxTokensMinted) || isMinting}
 				>
 					{#if isMinting}
 						Minting...

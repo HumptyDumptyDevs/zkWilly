@@ -1,5 +1,6 @@
 import { defaultWagmiConfig, createWeb3Modal } from '@web3modal/wagmi';
 import {
+	http,
 	getAccount,
 	getChainId,
 	reconnect,
@@ -11,12 +12,15 @@ import {
 } from '@wagmi/core';
 import { readable, writable } from 'svelte/store';
 import { abi } from './zkWillyNftAbi';
-import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
-import { PUBLIC_WALLETCONNECT_PROJECT_ID } from '$env/static/public';
+import {
+	PUBLIC_ALCHEMY_ZKSYNC_SEPOLIA_RPC,
+	PUBLIC_ALCHEMY_ZKSYNC_MAINNET_RPC,
+	PUBLIC_NFT_CONTRACT_ADDRESS,
+	PUBLIC_WALLETCONNECT_PROJECT_ID
+} from '$env/static/public';
 import { zkSync, zkSyncSepoliaTestnet } from '@wagmi/core/chains';
 
 export const CUSTOM_WALLET = 'wc:custom_wallet';
-
 export const projectId = PUBLIC_WALLETCONNECT_PROJECT_ID;
 
 let storedCustomWallet;
@@ -38,6 +42,10 @@ export const chains = [zkSync, zkSyncSepoliaTestnet];
 export const wagmiConfig = defaultWagmiConfig({
 	projectId,
 	chains,
+	transports: {
+		[zkSync.id]: http(PUBLIC_ALCHEMY_ZKSYNC_MAINNET_RPC),
+		[zkSyncSepoliaTestnet.id]: http(PUBLIC_ALCHEMY_ZKSYNC_SEPOLIA_RPC)
+	},
 	metadata,
 	enableCoinbase: false,
 	enableInjected: false

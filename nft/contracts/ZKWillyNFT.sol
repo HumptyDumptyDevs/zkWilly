@@ -18,7 +18,7 @@ contract ZKWillyNFT is ERC721, Ownable {
     event NFTMinted(address indexed minter, uint256 indexed tokenId);
 
     uint256 public constant MINIMUM_USD = 1e18;
-    uint256 public constant MAX_TOKENS = 2500;
+    uint256 public constant MAX_TOKENS = 4;
 
     uint256 private s_tokenCounter;
     uint256 private s_nonce;
