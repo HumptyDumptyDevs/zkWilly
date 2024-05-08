@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-chai-matchers";
-
 import "@matterlabs/hardhat-zksync";
 
 const config: HardhatUserConfig = {

@@ -9,7 +9,7 @@ export async function getChainlinkPriceFeedAddress(network) {
   // Check if the network is a local or dockerized node
   if (
     network === "hardhat" ||
-    network === "localhost" ||
+    network === "inMemoryNode" ||
     network === "dockerizedNode"
   ) {
     const wallet = getWallet(LOCAL_RICH_WALLETS[0].privateKey);

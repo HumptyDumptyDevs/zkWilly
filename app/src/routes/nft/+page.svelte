@@ -231,32 +231,32 @@
 					<tbody>
 						<tr>
 							<td>&lt 0.01</td>
-							<td>?</td>
+							<td>Plankton</td>
 						</tr>
 						<tr>
 							<td>&lt 0.2</td>
-							<td>?</td>
+							<td>Shrimp</td>
 						</tr>
 						<tr>
 							<td>&lt 0.5</td>
-							<td>?</td>
+							<td>Pufferfish</td>
 						</tr>
 						<tr>
 							<td>&lt 1</td>
-							<td>?</td>
+							<td>Dolphin</td>
 						</tr>
 						<tr>
 							<td>&lt 3</td>
-							<td>?</td>
+							<td>Beluga Whale</td>
 						</tr>
 
 						<tr>
 							<td>&lt 5</td>
-							<td>?</td>
+							<td>Narwhal</td>
 						</tr>
 						<tr>
 							<td>&lt 10</td>
-							<td>?</td>
+							<td>Orca</td>
 						</tr>
 						<tr>
 							<td>&lt 20</td>
