@@ -6,6 +6,7 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
+import {IL2Bridge} from "./IL2Bridge.sol";
 
 contract ZKWillyNFT is ERC721, Ownable {
     using PriceConverter for *;
@@ -15,6 +16,7 @@ contract ZKWillyNFT is ERC721, Ownable {
     error ZKWillyNFT__MaxTokensMinted();
     error ZKWillyNFT__MintNotStarted();
     error ZKWillyNFT__MintEnded();
+    error ZKWillyNFT__MintNotEnded();
 
     event NFTMinted(address indexed minter, uint256 indexed tokenId);
 
@@ -22,7 +24,9 @@ contract ZKWillyNFT is ERC721, Ownable {
     uint256 public constant MAX_TOKENS = 4;
     uint256 public constant MINT_DURATION = 48 hours;
     uint256 public s_mintStartTime;
-    // address payable public seaShepherdWallet;
+    address public i_ethToken = 0x000000000000000000000000000000000000800A;
+    IL2Bridge public immutable i_l2Bridge;
+    address payable public immutable i_seaShepherdWallet;
 
     uint256 private s_tokenCounter;
     uint256 private s_nonce;
@@ -60,9 +64,10 @@ contract ZKWillyNFT is ERC721, Ownable {
 
     constructor(
         string[] memory initWhaleURIs,
-        // address payable _seaShepherdWallet
         address priceFeed,
-        uint256 tokenLimit
+        uint256 tokenLimit,
+        address l2BridgeAddress,
+        address payable seaShepherdWallet
     ) ERC721("zkWillyNFT", "WILLY") Ownable() {
         if (initWhaleURIs.length != 21) {
             revert ZKWillyNFT__NotEnoughWhales();
@@ -74,7 +79,8 @@ contract ZKWillyNFT is ERC721, Ownable {
         i_priceFeed = AggregatorV3Interface(priceFeed);
         s_nonce = 0;
         s_tokenCounter = 1;
-        // seaShepherdWallet = _seaShepherdWallet;
+        i_l2Bridge = IL2Bridge(l2BridgeAddress);
+        i_seaShepherdWallet = seaShepherdWallet;
     }
 
     function startMint() public onlyOwner {
@@ -111,6 +117,19 @@ contract ZKWillyNFT is ERC721, Ownable {
         // require(success, "Failed to send ETH to designated address");
 
         emit NFTMinted(msg.sender, tokenId);
+    }
+
+    function donateFunds() public onlyOwner {
+        // Ensure minting has ended
+        if (block.timestamp < s_mintStartTime + MINT_DURATION) {
+            revert ZKWillyNFT__MintNotEnded();
+        }
+
+        // Get the current contract balance
+        uint256 currentBalance = address(this).balance;
+
+        // Use the contract's balance as the withdrawal amount
+        i_l2Bridge.withdraw(i_seaShepherdWallet, i_ethToken, currentBalance);
     }
 
     function getPsuedoRandomNumber(uint8 modulus) private returns (uint8) {
