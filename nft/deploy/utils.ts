@@ -123,6 +123,7 @@ export const deployContract = async (
     artifact,
     constructorArguments || []
   );
+
   log(`Estimated deployment cost: ${ethers.formatEther(deploymentFee)} ETH`);
 
   // Check if the wallet has enough balance

@@ -556,14 +556,14 @@
           "ipfs://bafybeihq5ba6wkpetsrpfcxyzuzm54lcjw7jkl4w2q5leqpz3ayccjdmby/",
           "ipfs://bafybeifwqjlefotbds2cuakwredj4klxlsivkksqb4su6stysgqvekcdue/"
         ],
-        "0x4073f1f3312ad7B0c3479aCbA9aFbf45588a418b",
+        "0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF",
         2500
       ],
       "salt": "0x0000000000000000000000000000000000000000000000000000000000000000",
       "deploymentType": "create",
       "factoryDeps": [],
-      "address": "0x1b99c1a148B593B3531f18E9f7ea514A7166ddd6",
-      "txHash": "0xbe6dc7082a4005d683bbf419dfae3cd26480090bc6b991fc594ba154684af5ba"
+      "address": "0x75DBCDcdBd9D5f54954a4E541752fD45F414ddD9",
+      "txHash": "0x77793c363855b21dca5a50cdd3079abc653f5e4b8482db832819f2193a3c6b5b"
     }
   ]
 }

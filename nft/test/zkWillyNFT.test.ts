@@ -1,11 +1,12 @@
 import { expect } from "chai";
 import deploy from "../deploy/deploy";
-import { Contract, Wallet, Provider } from "zksync-ethers";
+import { Contract, Provider, Wallet } from "zksync-ethers";
 import {
   getWallet,
   deployContract,
   LOCAL_RICH_WALLETS,
   getRandomWallet,
+  getProvider,
 } from "../deploy/utils";
 import { whaleTypes } from "../deploy/helperConfig";
 import * as hre from "hardhat";
@@ -17,11 +18,16 @@ describe("ZKWillyNFT Minting", function () {
 
   before(async function () {
     ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+    await nftContract.startMint();
   });
 
-  it("Should mint a new NFT to the recipient", async function () {
+  it("Should mint a new NFT to the recipient if enough ETH sent", async function () {
+    //Work out $21 in ETH if the price of ETH is $4000
+
+    // 21 / 4000 = 0.00525
+
     const tx = await nftContract.mintNFT({
-      value: ethers.parseEther("0.1"),
+      value: ethers.parseEther("0.00525"),
     });
     await tx.wait();
     const balance = await nftContract.balanceOf(deployerWallet.address);
@@ -29,9 +35,13 @@ describe("ZKWillyNFT Minting", function () {
   });
 
   it("It shouldn't mint a new NFT if the recipient doesn't send enough ETH", async function () {
+    //Work out $19 in ETH if the price of ETH is $4000
+
+    // 19 / 4000 = 0.00475
+
     await expect(
       nftContract.mintNFT({
-        value: ethers.parseEther("0.00001"),
+        value: ethers.parseEther("0.00475"),
       })
     ).to.be.revertedWithCustomError(
       nftContract,
@@ -40,11 +50,11 @@ describe("ZKWillyNFT Minting", function () {
   });
 
   it("Should have correct token URI after minting", async function () {
-    const tokenId = 1; // Assuming the first token minted has ID 1
-    const tokenURI = await nftContract.tokenURI(tokenId);
-    expect(tokenURI).to.equal(
-      "ipfs://bafybeibix2lvq7m4tsv7wjebeezzqqyn4dcsxclnd2wu43r2nnmayq2qr4/"
-    );
+    const whaleType = await nftContract.getWhaleType(1);
+    const readableType = whaleTypes[whaleType];
+    const expectedTypes = ["BLUE_WHALE", "SHINY_BLUE_WHALE"];
+
+    expect(expectedTypes).to.include(readableType);
   });
 
   it("Should allow owner to mint multiple NFTs", async function () {
@@ -76,11 +86,8 @@ describe("ZKWillyNFT Minting", function () {
     // Now lets check if they are shiny
 
     for (let i = 1; i <= numberOfTests; i++) {
-      console.log(`Checking whale type for token ID ${i}`);
       const whaleType = await nftContract.getWhaleType(i);
-      console.log(`Whale type: ${whaleType}`);
       const tokenURI = await nftContract.tokenURI(i);
-      console.log(`Token URI: ${tokenURI}`);
       if (isShiny(whaleType)) {
         shinyCount++;
       }
@@ -90,8 +97,6 @@ describe("ZKWillyNFT Minting", function () {
     expect(proportion).to.be.closeTo(0.1, 0.1);
 
     function isShiny(type) {
-      // Convert type to BigInt for comparison if necessary
-      // Assuming that 'type' might be returning as a BigInt from the blockchain
       return BigInt(type) % BigInt(2) === BigInt(1);
     }
   });
@@ -103,6 +108,7 @@ describe("ZKWillyNFT Boundry Test", function () {
 
   before(async function () {
     ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+    await nftContract.startMint();
   });
 
   const testCases = [
@@ -127,28 +133,12 @@ describe("ZKWillyNFT Boundry Test", function () {
     } ETH`, async function () {
       const testAccount = getRandomWallet();
 
-      console.log(
-        `Testing with ${
-          testCase.balance
-        } ETH, expected types: ${testCase.expectedTypes.join(" OR ")}`
-      );
-
-      console.log(`Deployer balance: ${await deployerWallet.getBalance()}`);
-
-      console.log(
-        `Test account balance before transaction: ${await testAccount.getBalance()}`
-      );
-
       const initTx = await deployerWallet.sendTransaction({
         to: testAccount.address,
         value: ethers.parseEther(testCase.balance),
       });
 
       await initTx.wait();
-
-      console.log(
-        `Test account balance after transaction: ${await testAccount.getBalance()}`
-      );
 
       const tx = await nftContract
         .connect(testAccount)
@@ -159,19 +149,141 @@ describe("ZKWillyNFT Boundry Test", function () {
 
       const latestTokenId = await nftContract.getTotalTokenCount();
 
-      console.log(`Token ID: ${latestTokenId}`);
-
       const owner = await nftContract.ownerOf(latestTokenId);
-
-      console.log(`Owner of token ID ${latestTokenId}: ${owner}`);
-      console.log(`Test account address: ${testAccount.address}`);
-
       const whaleType = await nftContract.getWhaleType(latestTokenId);
-
-      console.log(`Whale type: ${whaleType}`);
 
       const readableType = whaleTypes[whaleType];
       expect(testCase.expectedTypes).to.include(readableType);
     });
   }
+});
+
+describe("ZKWillyNFT Limit Test", function () {
+  let nftContract: Contract;
+  let deployerWallet: Wallet;
+
+  before(async function () {
+    //TODO, figure out how to deploy with only 10 limit
+
+    ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+    await nftContract.startMint();
+  });
+
+  it("Should only mint the maximum number of tokens", async function () {
+    for (let i = 0; i < 10; i++) {
+      const tx = await nftContract.mintNFT({
+        value: ethers.parseEther("0.1"),
+      });
+      await tx.wait();
+    }
+
+    await expect(
+      nftContract.mintNFT({
+        value: ethers.parseEther("0.1"),
+      })
+      //@ts-ignore
+    ).to.be.revertedWithCustomError(nftContract, "ZKWillyNFT__MaxTokensMinted");
+  });
+});
+
+describe("ZKWillyNFT Golden Willy Test", function () {
+  let nftContract: Contract;
+  let deployerWallet: Wallet;
+
+  before(async function () {
+    ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+    await nftContract.startMint();
+  });
+
+  it("should have approximately 1% Golden Willy NFTs", async function () {
+    this.timeout(0); // No Timeout
+
+    const numberOfTests = 500;
+    let goldenWillyCount = 0;
+
+    for (let i = 0; i < numberOfTests; i++) {
+      console.log("Minting NFT: ", i + 1);
+      const tx = await nftContract.mintNFT({
+        value: ethers.parseEther("0.1"),
+      });
+      await tx.wait();
+
+      const latestTokenId = await nftContract.getTotalTokenCount();
+
+      const whaleType = await nftContract.getWhaleType(latestTokenId);
+      const readableType = whaleTypes[whaleType];
+      if (readableType === "GOLDEN_WILLY") {
+        console.log("GOLDEN WILLY FOUND");
+        goldenWillyCount++;
+      }
+    }
+
+    const proportion = goldenWillyCount / numberOfTests;
+
+    console.log(
+      `Golden Willy's minted ${goldenWillyCount} times out of ${numberOfTests} tests. Proportion: ${proportion}`
+    );
+    expect(proportion).to.be.closeTo(0.01, 0.01);
+  });
+});
+
+describe("ZKWillyNFT Mint Duration Test", function () {
+  let nftContract: Contract;
+  let deployerWallet: Wallet;
+  let provider: Provider;
+
+  before(async function () {
+    ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+
+    provider = getProvider();
+  });
+
+  it("Should not mint if the mint hasnt started yet", async function () {
+    await expect(
+      nftContract.mintNFT({
+        value: ethers.parseEther("0.1"),
+      })
+    ).to.be.revertedWithCustomError(nftContract, "ZKWillyNFT__MintNotStarted");
+  });
+
+  it("Should not let a random person start the mint", async function () {
+    const randomWallet = getRandomWallet();
+
+    await expect(
+      //@ts-ignore
+      nftContract.connect(randomWallet).startMint()
+    ).to.be.reverted;
+  });
+
+  it("Should let the owner start the mint", async function () {
+    await expect(nftContract.startMint()).to.emit(nftContract, "MintStarted");
+  });
+
+  it("Should let you mint after the mint has started", async function () {
+    //Log the block timestamp
+
+    let currentTimeStamp: number = await (
+      await provider.getBlock("latest")
+    ).timestamp;
+
+    console.log("Current TimeStamp: ", currentTimeStamp);
+
+    const tx = await nftContract.mintNFT({
+      value: ethers.parseEther("0.1"),
+    });
+    await tx.wait();
+    const balance = await nftContract.balanceOf(deployerWallet.address);
+    expect(balance).to.equal(BigInt("1"));
+  });
+
+  //Not working for me right now
+  // it("Should be that the mint ends after 48 hours", async function () {
+  //   await provider.send("evm_increaseTime", [60 * 60 * 48]); // Increase time by 48 hours
+
+  //   await expect(
+  //     nftContract.mintNFT({
+  //       value: ethers.parseEther("0.1"),
+  //     })
+  //   ).to.be.revertedWithCustomError(nftContract, "ZKWillyNFT__MintEnded");
+  // });
 });

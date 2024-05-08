@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
 
@@ -14,13 +13,10 @@ contract ZKWillyNFT is ERC721, Ownable {
     error ZKWillyNFT__NotEnoughETHSent();
     error ZKWillyNFT__NotEnoughWhales();
     error ZKWillyNFT__MaxTokensMinted();
+    error ZKWillyNFT__MintNotStarted();
+    error ZKWillyNFT__MintEnded();
 
-    uint256 public constant MINIMUM_USD = 20e18;
-    uint256 public constant MAX_TOKENS = 2500;
-
-    uint256 private s_tokenCounter;
-    uint256 private s_nonce;
-    AggregatorV3Interface private s_priceFeed;
+    AggregatorV3Interface private immutable i_priceFeed;
 
     enum WhaleType {
         PLANKTON,
@@ -46,30 +42,60 @@ contract ZKWillyNFT is ERC721, Ownable {
         GOLDEN_WILLY
     }
 
+    uint256 public constant MINIMUM_USD = 20e18;
+    uint256 public constant MINT_DURATION = 48 hours;
+
+    uint256 private immutable i_tokenLimit;
+
+    uint256 public s_mintStartTime;
+    uint256 private s_tokenCounter;
+    uint256 private s_nonce;
+
     mapping(uint256 => WhaleType) private s_tokenIdToWhale;
     mapping(WhaleType => string) private s_whaleTypeToURI;
 
+    event MintStarted(uint256 indexed startTime);
+
     constructor(
         string[] memory initWhaleURIs,
-        address priceFeed
-    ) ERC721("zkWillyNFT", "WILLY") Ownable() {
+        address priceFeed,
+        uint256 tokenLimit
+    )
+        // uint256 tokenLimit
+        ERC721("zkWillyNFT", "WILLY")
+        Ownable()
+    {
         if (initWhaleURIs.length != 21) {
             revert ZKWillyNFT__NotEnoughWhales();
         }
         for (uint256 i = 0; i < initWhaleURIs.length; i++) {
             s_whaleTypeToURI[WhaleType(i)] = initWhaleURIs[i];
         }
-        s_priceFeed = AggregatorV3Interface(priceFeed);
+        i_tokenLimit = tokenLimit;
+        i_priceFeed = AggregatorV3Interface(priceFeed);
         s_nonce = 0;
         s_tokenCounter = 1;
     }
 
+    function startMint() public onlyOwner {
+        s_mintStartTime = block.timestamp;
+        emit MintStarted(s_mintStartTime);
+    }
+
     function mintNFT() public payable {
-        if (s_tokenCounter > MAX_TOKENS) {
+        if (s_mintStartTime == 0) {
+            revert ZKWillyNFT__MintNotStarted();
+        }
+
+        if (block.timestamp > s_mintStartTime + MINT_DURATION) {
+            revert ZKWillyNFT__MintEnded();
+        }
+
+        if (s_tokenCounter > i_tokenLimit) {
             revert ZKWillyNFT__MaxTokensMinted();
         }
 
-        if (msg.value.getConversionRate(s_priceFeed) < MINIMUM_USD) {
+        if (msg.value.getConversionRate(i_priceFeed) < MINIMUM_USD) {
             revert ZKWillyNFT__NotEnoughETHSent();
         }
 
