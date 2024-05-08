@@ -260,7 +260,7 @@
 						</tr>
 						<tr>
 							<td>&lt 20</td>
-							<td>?</td>
+							<td>Humpback</td>
 						</tr>
 						<tr>
 							<td>&lt 100</td>
