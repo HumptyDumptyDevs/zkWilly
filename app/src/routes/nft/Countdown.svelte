@@ -4,7 +4,7 @@
 
 	export let targetDate;
 	export let amountMinted;
-	let totalTokens = 4;
+	let totalTokens = 2500;
 
 	// Calculate remaining time in milliseconds
 	let remainingTime = new Date(targetDate).getTime() - Date.now();
@@ -26,7 +26,7 @@
 	}
 
 	// Detect when max tokens have been minted
-	$: if ($amountMinted >= totalTokens) {
+	$: if (amountMinted >= totalTokens) {
 		dispatch('maxTokensMinted');
 	}
 
@@ -43,10 +43,10 @@
 		</div>
 	{:else}
 		<div class="flex justify-center timer text-black font-bold">
-			{#if $amountMinted >= totalTokens}
+			{#if amountMinted >= totalTokens}
 				SOLD OUT
 			{:else}
-				{$amountMinted} / {totalTokens}
+				{amountMinted} / {totalTokens}
 			{/if}
 		</div>
 	{/if}
