@@ -8,7 +8,7 @@ import "./PriceConverter.sol";
 
 /*
  * @title zkWilly X Sea Shepherd Charity NFT Project
- * @author Charlie Mack & Jack Goodacre
+ * @author Humpty Dumpty Devs
  * @notice This contract is an ERC721 implementation for minting charity NFTs on zkSync Era L2.
  */
 contract ZKWillyNFT is ERC721, Ownable {
@@ -23,18 +23,11 @@ contract ZKWillyNFT is ERC721, Ownable {
     error ZKWillyNFT__MintNotStarted();
     error ZKWillyNFT__MintEnded();
     error ZKWillyNFT__MintNotEnded();
+    error ZKWillyNFT__WithdrawalFailed();
 
-    /////////////////////////
-    //  State Variables   //
-    ////////////////////////
-    uint256 private constant MINIMUM_USD = 1e18;
-    uint256 private constant MINT_DURATION = 5 minutes;
-    uint256 private s_mintStartTime;
-    uint256 private s_tokenCounter;
-    uint256 private s_nonce;
-    address private immutable i_withdrawalWallet;
-    uint256 private immutable i_tokenLimit;
-    AggregatorV3Interface private immutable i_priceFeed;
+    ///////////////
+    //  Types    //
+    ///////////////
 
     enum WhaleType {
         PLANKTON,
@@ -60,6 +53,17 @@ contract ZKWillyNFT is ERC721, Ownable {
         GOLDEN_WILLY
     }
 
+    /////////////////////////
+    //  State Variables   //
+    ////////////////////////
+    uint256 private constant MINIMUM_USD = 1e18;
+    uint256 private constant MINT_DURATION = 5 minutes;
+    uint256 private s_mintStartTime;
+    uint256 private s_tokenCounter;
+    uint256 private s_nonce;
+    uint256 private immutable i_tokenLimit;
+    AggregatorV3Interface private immutable i_priceFeed;
+
     mapping(uint256 => WhaleType) private s_tokenIdToWhale;
     mapping(WhaleType => string) private s_whaleTypeToURI;
 
@@ -78,7 +82,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @param tokenLimit Maximum number of tokens allowed to be minted.
      * @param withdrawalWallet Address for receiving collected funds.
      */
-    constructor(string[] memory initWhaleURIs, address priceFeedAddress, uint256 tokenLimit, address withdrawalWallet)
+    constructor(string[] memory initWhaleURIs, address priceFeedAddress, uint256 tokenLimit)
         ERC721("zkWillyNFT", "WILLY")
         Ownable()
     {
@@ -90,7 +94,6 @@ contract ZKWillyNFT is ERC721, Ownable {
         }
         i_tokenLimit = tokenLimit;
         i_priceFeed = AggregatorV3Interface(priceFeedAddress);
-        i_withdrawalWallet = withdrawalWallet;
         s_nonce = 0;
         s_tokenCounter = 1;
     }
@@ -154,10 +157,12 @@ contract ZKWillyNFT is ERC721, Ownable {
 
         // Get the current contract balance
         uint256 currentBalance = address(this).balance;
-        (bool success,) = i_withdrawalWallet.call{value: currentBalance}(""); // Send Ether
-        require(success, "Withdrawal failed");
-
         emit FundsWithdrawn(currentBalance);
+
+        (bool success,) = (msg.sender).call{value: currentBalance}(""); // Send Ether
+        if (!success) {
+            revert ZKWillyNFT__WithdrawalFailed();
+        }
     }
 
     /*
@@ -228,28 +233,28 @@ contract ZKWillyNFT is ERC721, Ownable {
     /*
      * @notice Returns the minimum USD value required for minting.
      */
-    function minimumUSD() public pure returns (uint256) {
+    function getMinimumUSD() public pure returns (uint256) {
         return MINIMUM_USD;
     }
 
     /*
      * @notice Returns the duration of the minting period.
      */
-    function mintDuration() public pure returns (uint256) {
+    function getMintDuration() public pure returns (uint256) {
         return MINT_DURATION;
     }
 
     /*
      * @notice Returns the timestamp when the minting process started.
      */
-    function mintStartTime() public view returns (uint256) {
+    function getMintStartTime() public view returns (uint256) {
         return s_mintStartTime;
     }
 
     /*
      * @notice Returns the address designated to receive collected funds.
      */
-    function withdrawalWallet() public view returns (address) {
+    function getWithdrawalWallet() public view returns (address) {
         return i_withdrawalWallet;
     }
 
