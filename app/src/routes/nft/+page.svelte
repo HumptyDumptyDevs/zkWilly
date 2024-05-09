@@ -48,7 +48,7 @@
 		image: 'https://i.imgur.com/WOgTG96.gif'
 	};
 
-	let targetDate = '2024-04-30T11:12:00';
+	let targetDate = '2024-05-10T12:00:00';
 	let timerFinished = false;
 	let maxTokensMinted = false;
 	let isMinting = false;
@@ -181,7 +181,6 @@
 	<h2 class="h2 text-center text-xl md:text-4xl text-black font-bold pb-4 md:pb-4 md:pt-0">
 		Charity NFT
 	</h2>
-	<!-- <Countdown targetDate="2024-05-10T12:00:00" on:timerFinished={handleTimerFinished} /> -->
 	<Countdown
 		{targetDate}
 		on:timerFinished={handleTimerFinished}
@@ -273,7 +272,7 @@
 						</tr>
 						<tr>
 							<td>&lt 100</td>
-							<td>?</td>
+							<td>Sperm Whale</td>
 						</tr>
 						<tr>
 							<td>100+</td>
