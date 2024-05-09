@@ -36,6 +36,7 @@
 	// Stores
 	const modalStore = getModalStore();
 	let amountMinted = 0;
+	let watching = false;
 
 	const modal: ModalSettings = {
 		type: 'alert',
@@ -95,59 +96,63 @@
 		isMinting = true;
 		errorMessage = null;
 
-		const unwatchSelfMint = watchContractEvent(wagmiConfig, {
-			address: PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
-			abi,
-			eventName: 'NFTMinted',
-			args: { minter: getAccount(wagmiConfig).address },
-			async onLogs(logs) {
-				console.log('Self Mint event caught!', logs);
+		if (!watching) {
+			watching = true;
+			const unwatchSelfMint = watchContractEvent(wagmiConfig, {
+				address: PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
+				abi,
+				eventName: 'NFTMinted',
+				args: { minter: getAccount(wagmiConfig).address },
+				async onLogs(logs) {
+					console.log('Self Mint event caught!', logs);
 
-				// Get tokenId from event
-				const tokenId = logs[0].args.tokenId;
-				const tokenUri = await getTokenUri(tokenId);
+					// Get tokenId from event
+					const tokenId = logs[0].args.tokenId;
+					const tokenUri = await getTokenUri(tokenId);
 
-				const ipfsToLocalImageMap = {
-					'ipfs://QmY4TJEBNdARPwfXBvL2HhKsQf36PjUGokz2wksd5oF5ah/': planktonStandard,
-					'ipfs://QmWDScpviJzPzD8WhEday1GjVTMMiQF3UNtP5aDqPh6oxT/': planktonShiny,
-					'ipfs://Qma5DPMj4XeihW6mvuGuqUbjkbLeSJUWsHqGkBX98Qnkeg/': shrimpStandard,
-					'ipfs://QmcW2z6UfXQcV1n9zt9fQCiUPNqop8tvCGmuTtMMR84ZkF/': shrimpShiny,
-					'ipfs://QmaBDxQgh9vRRqswacic6tAZgfjnu5Ci9uY2krzBZf4GVB/': pufferfishStandard,
-					'ipfs://QmedpgVF91HHdWXN1yn9v5PMVPdoee6627ANaBVbmWRQTX/': pufferfishShiny,
-					'ipfs://QmV1mtATyJ8s6Z6Z2uukVtDxa1vo9rduEz6aXY5D1UYgWh/': dolphinStandard,
-					'ipfs://QmSPaNzEYQKd6t7a3idMsLf2tba7sdPJraRfPk2LZtKoRh/': dolphinShiny,
-					'ipfs://Qmd1A3nS9BaSRhrFmSA7hoS86qaAZ1MTfEKVAMdQ9uwYwv/': belugaStandard,
-					'ipfs://QmXVbcKt2VCPkZmV2aKwBdPx6PBch9Uv7dRPmW8SC8qGjD/': belugaShiny,
-					'ipfs://QmXaMHiJUXBg4Kq1eozmashFdLS1kHkiFKgAdXz13dqSMC/': narwhalStandard,
-					'ipfs://QmRyxrqQgLSAVXs4b2T3k5ubBgjT5NE8UF2sExWFimdxWA/': narwhalShiny,
-					'ipfs://Qmf5mH5fSwe8Q72g2eagJaHBUHQxgsyyMFZqkDGCs3dcaZ/': orcaStandard,
-					'ipfs://QmViHFvfytZR95txpUf38G9YJV2BuX2ThH5UaGcdJMstgN/': orcaShiny,
-					'ipfs://QmTQFQVUFTNscWvptfC5m3ZHNZ4d8cc8WiRuYBbmXrUpCE/': humpbackStandard,
-					'ipfs://QmNgxr5tYhpkUmVzvRnpzGuvYpFdBvMXNasC4MHAtZ2xfo/': humpbackShiny,
-					'ipfs://QmQdGNx8ZCdegtvHzvFykZWmgYKNB6dH9Tqg3E39YtuBEz/': spermStandard,
-					'ipfs://QmPRkvqRBmpZAcGoML8Secxng3CFwipQiP13Hj7iray7HP/': spermShiny,
-					'ipfs://QmPA7KZAaSSxuaeAWjLpCpJZpiry16tZgEtEwy1UhBrXgX/': blueWhaleStandard,
-					'ipfs://QmdGKySFeWNpqgsij2vGiHiZU1qYbqevyjgrnmcydecNNe/': blueWhaleShiny,
-					'ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/': goldenWilly
-				};
+					const ipfsToLocalImageMap = {
+						'ipfs://QmY4TJEBNdARPwfXBvL2HhKsQf36PjUGokz2wksd5oF5ah/': planktonStandard,
+						'ipfs://QmWDScpviJzPzD8WhEday1GjVTMMiQF3UNtP5aDqPh6oxT/': planktonShiny,
+						'ipfs://Qma5DPMj4XeihW6mvuGuqUbjkbLeSJUWsHqGkBX98Qnkeg/': shrimpStandard,
+						'ipfs://QmcW2z6UfXQcV1n9zt9fQCiUPNqop8tvCGmuTtMMR84ZkF/': shrimpShiny,
+						'ipfs://QmaBDxQgh9vRRqswacic6tAZgfjnu5Ci9uY2krzBZf4GVB/': pufferfishStandard,
+						'ipfs://QmedpgVF91HHdWXN1yn9v5PMVPdoee6627ANaBVbmWRQTX/': pufferfishShiny,
+						'ipfs://QmV1mtATyJ8s6Z6Z2uukVtDxa1vo9rduEz6aXY5D1UYgWh/': dolphinStandard,
+						'ipfs://QmSPaNzEYQKd6t7a3idMsLf2tba7sdPJraRfPk2LZtKoRh/': dolphinShiny,
+						'ipfs://Qmd1A3nS9BaSRhrFmSA7hoS86qaAZ1MTfEKVAMdQ9uwYwv/': belugaStandard,
+						'ipfs://QmXVbcKt2VCPkZmV2aKwBdPx6PBch9Uv7dRPmW8SC8qGjD/': belugaShiny,
+						'ipfs://QmXaMHiJUXBg4Kq1eozmashFdLS1kHkiFKgAdXz13dqSMC/': narwhalStandard,
+						'ipfs://QmRyxrqQgLSAVXs4b2T3k5ubBgjT5NE8UF2sExWFimdxWA/': narwhalShiny,
+						'ipfs://Qmf5mH5fSwe8Q72g2eagJaHBUHQxgsyyMFZqkDGCs3dcaZ/': orcaStandard,
+						'ipfs://QmViHFvfytZR95txpUf38G9YJV2BuX2ThH5UaGcdJMstgN/': orcaShiny,
+						'ipfs://QmTQFQVUFTNscWvptfC5m3ZHNZ4d8cc8WiRuYBbmXrUpCE/': humpbackStandard,
+						'ipfs://QmNgxr5tYhpkUmVzvRnpzGuvYpFdBvMXNasC4MHAtZ2xfo/': humpbackShiny,
+						'ipfs://QmQdGNx8ZCdegtvHzvFykZWmgYKNB6dH9Tqg3E39YtuBEz/': spermStandard,
+						'ipfs://QmPRkvqRBmpZAcGoML8Secxng3CFwipQiP13Hj7iray7HP/': spermShiny,
+						'ipfs://QmPA7KZAaSSxuaeAWjLpCpJZpiry16tZgEtEwy1UhBrXgX/': blueWhaleStandard,
+						'ipfs://QmdGKySFeWNpqgsij2vGiHiZU1qYbqevyjgrnmcydecNNe/': blueWhaleShiny,
+						'ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/': goldenWilly
+					};
 
-				// Update modal data based on mint success
-				modal.title = 'Mint Successful!';
-				modal.body = `You have successfully minted your NFT. 
+					// Update modal data based on mint success
+					modal.title = 'Mint Successful!';
+					modal.body = `You have successfully minted your NFT. 
 				View it on 
                     <a href="https://sepolia-era.zksync.network/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank" style="color: blue; text-decoration: underline;">
                         ZkSync Explorer
                     </a>`; // TODO: Dynamically update block explorer
-				modal.image = ipfsToLocalImageMap[tokenUri];
+					modal.image = ipfsToLocalImageMap[tokenUri];
 
-				// Trigger modal
-				modalStore.trigger(modal);
-				unwatchSelfMint();
+					// Trigger modal
+					modalStore.trigger(modal);
+					unwatchSelfMint();
 
-				isMinting = false;
-				amountMinted = await getAmountMinted();
-			}
-		});
+					isMinting = false;
+					amountMinted = await getAmountMinted();
+					watching = false;
+				}
+			});
+		}
 
 		try {
 			const response = await mintNft();
