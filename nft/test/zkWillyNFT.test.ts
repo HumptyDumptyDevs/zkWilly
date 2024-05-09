@@ -245,7 +245,6 @@ describe("ZKWillyNFT Mint Duration Test", function () {
 
   before(async function () {
     ({ contract: nftContract, wallet: deployerWallet } = await deploy());
-
     provider = getProvider();
   });
 
@@ -286,15 +285,63 @@ describe("ZKWillyNFT Mint Duration Test", function () {
     const balance = await nftContract.balanceOf(deployerWallet.address);
     expect(balance).to.equal(BigInt("1"));
   });
+});
 
-  //Not working for me right now
-  // it("Should be that the mint ends after 48 hours", async function () {
-  //   await provider.send("evm_increaseTime", [60 * 60 * 48]); // Increase time by 48 hours
+describe("ZKWillyNFT Mint End Test And Withdraw", function () {
+  let nftContract: Contract;
+  let deployerWallet: Wallet;
+  let provider: Provider;
+  let balance: ethers.BigNumberish;
 
-  //   await expect(
-  //     nftContract.mintNFT({
-  //       value: ethers.parseEther("0.1"),
-  //     })
-  //   ).to.be.revertedWithCustomError(nftContract, "ZKWillyNFT__MintEnded");
-  // });
+  before(async function () {
+    ({ contract: nftContract, wallet: deployerWallet } = await deploy(
+      30,
+      ethers.parseUnits("1.0", "ether").toString()
+    ));
+    provider = getProvider();
+    balance = await deployerWallet.getBalance();
+  });
+
+  it("Should start the mint", async function () {
+    await expect(nftContract.startMint()).to.emit(nftContract, "MintStarted");
+  });
+
+  it("Should end after 30 seconds", async function () {
+    let richWallet = getWallet(LOCAL_RICH_WALLETS[1].privateKey);
+    await expect(
+      //@ts-ignore
+      nftContract.connect(richWallet).mintNFT({
+        value: ethers.parseEther("10.1"),
+      })
+    ).to.emit(nftContract, "NFTMinted");
+
+    await new Promise((resolve) => setTimeout(resolve, 30000));
+
+    await expect(
+      nftContract.mintNFT({
+        value: ethers.parseEther("100"),
+      })
+    ).to.be.revertedWithCustomError(nftContract, "ZKWillyNFT__MintEnded");
+  });
+
+  it("Should fail if random wallet tries to withdraw", async function () {
+    const randomWallet = getRandomWallet();
+
+    await expect(
+      //@ts-ignore
+      nftContract.connect(randomWallet).withdraw()
+    ).to.be.reverted;
+  });
+
+  it("Should let owner withdraw", async function () {
+    // Log the balance before
+    console.log("Balance Before: ", await deployerWallet.getBalance());
+    await expect(nftContract.withdraw()).to.emit(nftContract, "FundsWithdrawn");
+    console.log("Balance After: ", await deployerWallet.getBalance());
+  });
+
+  it("Should add the eth to the owner's balance", async function () {
+    const newBalance = await deployerWallet.getBalance();
+    expect(newBalance).to.be.gt(balance);
+  });
 });

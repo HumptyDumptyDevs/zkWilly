@@ -31,12 +31,14 @@
 	import { watchContractEvent, getAccount } from '@wagmi/core';
 	import { account, mintNft, getTokenUri, getAmountMinted, wagmiConfig } from '$lib/web3modal';
 	import { getModalStore } from '@skeletonlabs/skeleton';
-	import { PUBLIC_NFT_CONTRACT_ADDRESS } from '$env/static/public';
+	import { PUBLIC_NFT_CONTRACT_ADDRESS, PUBLIC_BLOCKEXPLORER } from '$env/static/public';
 
 	// Stores
 	const modalStore = getModalStore();
 	let amountMinted = 0;
 	let watching = false;
+
+	let displayImage = mystery;
 
 	const modal: ModalSettings = {
 		type: 'alert',
@@ -58,9 +60,6 @@
 
 	function handleMaxTokensMinted() {
 		maxTokensMinted = true;
-		// console.log('Max tokens minted', maxTokensMinted);
-		// console.log('account connected', $account.isConnected);
-		// console.log('timer finished', timerFinished);
 	}
 
 	onMount(async () => {
@@ -76,7 +75,6 @@
 			handleTimerFinished();
 			// Using $amountMinted.set here to update the store's value
 			amountMinted = await getAmountMinted();
-			console.log('Amount minted:', amountMinted);
 		}
 
 		watchContractEvent(wagmiConfig, {
@@ -84,7 +82,6 @@
 			abi,
 			eventName: 'NFTMinted',
 			async onLogs(logs) {
-				console.log('Mint event caught!', logs);
 				amountMinted = await getAmountMinted();
 			}
 		});
@@ -92,7 +89,7 @@
 
 	async function mint() {
 		// Update mint function
-		console.log('Minting NFT');
+
 		isMinting = true;
 		errorMessage = null;
 
@@ -104,8 +101,6 @@
 				eventName: 'NFTMinted',
 				args: { minter: getAccount(wagmiConfig).address },
 				async onLogs(logs) {
-					console.log('Self Mint event caught!', logs);
-
 					// Get tokenId from event
 					const tokenId = logs[0].args.tokenId;
 					const tokenUri = await getTokenUri(tokenId);
@@ -134,14 +129,24 @@
 						'ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/': goldenWilly
 					};
 
+					if (ipfsToLocalImageMap[tokenUri].includes('shiny')) {
+						modal.body = `Contratulations You have successfully minted your NFT. Its a shiny!!!!`;
+					} else {
+						modal.body = `Congratulations, you have successfully minted your NFT. `;
+					}
+
+					//append the string
+					modal.body += `View it on 
+					<a href="${PUBLIC_BLOCKEXPLORER}/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank" style="color: blue; text-decoration: underline;">
+						ZkSync Explorer
+					</a>`;
+
 					// Update modal data based on mint success
 					modal.title = 'Mint Successful!';
-					modal.body = `You have successfully minted your NFT. 
-				View it on 
-                    <a href="https://sepolia-era.zksync.network/nft/${PUBLIC_NFT_CONTRACT_ADDRESS}/${tokenId}" target="_blank" style="color: blue; text-decoration: underline;">
-                        ZkSync Explorer
-                    </a>`; // TODO: Dynamically update block explorer
 					modal.image = ipfsToLocalImageMap[tokenUri];
+
+					// Update display image
+					displayImage = ipfsToLocalImageMap[tokenUri];
 
 					// Trigger modal
 					modalStore.trigger(modal);
@@ -194,7 +199,7 @@
 					href="https://sadanduseless.b-cdn.net/wp-content/uploads/2019/10/puffer-trumps8.jpg"
 					rel="noreferrer"
 				>
-					<img src={mystery} alt="zkWilly" class="w-60 md:w-full pb-2 md:pb-0" />
+					<img src={displayImage} alt="zkWilly" class="w-60 md:w-full pb-2 md:pb-0" />
 				</a>
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"

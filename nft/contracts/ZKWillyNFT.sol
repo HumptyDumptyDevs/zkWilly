@@ -56,12 +56,12 @@ contract ZKWillyNFT is ERC721, Ownable {
     /////////////////////////
     //  State Variables   //
     ////////////////////////
-    uint256 private constant MINIMUM_USD = 1e18;
-    uint256 private constant MINT_DURATION = 5 minutes;
     uint256 private s_mintStartTime;
     uint256 private s_tokenCounter;
     uint256 private s_nonce;
     uint256 private immutable i_tokenLimit;
+    uint256 private immutable i_mintDuration;
+    uint256 private immutable i_minimumUSD;
     AggregatorV3Interface private immutable i_priceFeed;
 
     mapping(uint256 => WhaleType) private s_tokenIdToWhale;
@@ -85,7 +85,9 @@ contract ZKWillyNFT is ERC721, Ownable {
     constructor(
         string[] memory _initWhaleURIs,
         address _priceFeedAddress,
-        uint256 _tokenLimit
+        uint256 _tokenLimit,
+        uint256 _mintDuration,
+        uint256 _minimumUSD
     ) ERC721("zkWillyNFT", "WILLY") Ownable() {
         if (_initWhaleURIs.length != 21) {
             revert ZKWillyNFT__NotEnoughWhales();
@@ -93,6 +95,8 @@ contract ZKWillyNFT is ERC721, Ownable {
         for (uint256 i = 0; i < _initWhaleURIs.length; i++) {
             s_whaleTypeToURI[WhaleType(i)] = _initWhaleURIs[i];
         }
+        i_minimumUSD = _minimumUSD;
+        i_mintDuration = _mintDuration;
         i_tokenLimit = _tokenLimit;
         i_priceFeed = AggregatorV3Interface(_priceFeedAddress);
         s_nonce = 0;
@@ -119,7 +123,7 @@ contract ZKWillyNFT is ERC721, Ownable {
             revert ZKWillyNFT__MintNotStarted();
         }
 
-        if (block.timestamp > s_mintStartTime + MINT_DURATION) {
+        if (block.timestamp > s_mintStartTime + i_mintDuration) {
             revert ZKWillyNFT__MintEnded();
         }
 
@@ -152,7 +156,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      */
     function withdraw() public onlyOwner {
         // Ensure minting has ended
-        if (block.timestamp < s_mintStartTime + MINT_DURATION) {
+        if (block.timestamp < s_mintStartTime + i_mintDuration) {
             revert ZKWillyNFT__MintNotEnded();
         }
 
@@ -160,7 +164,7 @@ contract ZKWillyNFT is ERC721, Ownable {
         uint256 currentBalance = address(this).balance;
         emit FundsWithdrawn(currentBalance);
 
-        (bool success, ) = (msg.sender).call{value: currentBalance}(""); // Send Ether
+        (bool success,) = (msg.sender).call{value: currentBalance}(""); // Send Ether
         if (!success) {
             revert ZKWillyNFT__WithdrawalFailed();
         }
@@ -171,9 +175,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @param modulus The modulus to use for the random number.
      */
     function getPsuedoRandomNumber(uint8 modulus) private returns (uint8) {
-        uint256 random = uint256(
-            keccak256(abi.encodePacked(block.timestamp, msg.sender, s_nonce))
-        );
+        uint256 random = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, s_nonce)));
         s_nonce++;
         return uint8(random % modulus);
     }
@@ -183,10 +185,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @param chance The random number generated to determine the whale type.
      * @param balance The balance of the minter.
      */
-    function determineWhaleType(
-        uint8 chance,
-        uint256 balance
-    ) private pure returns (WhaleType) {
+    function determineWhaleType(uint8 chance, uint256 balance) private pure returns (WhaleType) {
         if (chance == 1) {
             return WhaleType.GOLDEN_WILLY;
         }
@@ -196,32 +195,21 @@ contract ZKWillyNFT is ERC721, Ownable {
         } else if (balance < 0.2 ether) {
             return chance < 10 ? WhaleType.SHINY_SHRIMP : WhaleType.SHRIMP;
         } else if (balance < 0.5 ether) {
-            return
-                chance < 10 ? WhaleType.SHINY_PUFFERFISH : WhaleType.PUFFERFISH;
+            return chance < 10 ? WhaleType.SHINY_PUFFERFISH : WhaleType.PUFFERFISH;
         } else if (balance < 1 ether) {
             return chance < 10 ? WhaleType.SHINY_DOLPHIN : WhaleType.DOLPHIN;
         } else if (balance < 3 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_BELUGA_WHALE
-                    : WhaleType.BELUGA_WHALE;
+            return chance < 10 ? WhaleType.SHINY_BELUGA_WHALE : WhaleType.BELUGA_WHALE;
         } else if (balance < 5 ether) {
             return chance < 10 ? WhaleType.SHINY_NARWHAL : WhaleType.NARWHAL;
         } else if (balance < 10 ether) {
             return chance < 10 ? WhaleType.SHINY_ORCA : WhaleType.ORCA;
         } else if (balance < 20 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_HUMPBACK_WHALE
-                    : WhaleType.HUMPBACK_WHALE;
+            return chance < 10 ? WhaleType.SHINY_HUMPBACK_WHALE : WhaleType.HUMPBACK_WHALE;
         } else if (balance < 100 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_SPERM_WHALE
-                    : WhaleType.SPERM_WHALE;
+            return chance < 10 ? WhaleType.SHINY_SPERM_WHALE : WhaleType.SPERM_WHALE;
         } else {
-            return
-                chance < 10 ? WhaleType.SHINY_BLUE_WHALE : WhaleType.BLUE_WHALE;
+            return chance < 10 ? WhaleType.SHINY_BLUE_WHALE : WhaleType.BLUE_WHALE;
         }
     }
 
@@ -250,15 +238,15 @@ contract ZKWillyNFT is ERC721, Ownable {
     /*
      * @notice Returns the minimum USD value required for minting.
      */
-    function getMinimumUSD() public pure returns (uint256) {
-        return MINIMUM_USD;
+    function getMinimumUSD() public view returns (uint256) {
+        return i_minimumUSD;
     }
 
     /*
      * @notice Returns the duration of the minting period.
      */
-    function getMintDuration() public pure returns (uint256) {
-        return MINT_DURATION;
+    function getMintDuration() public view returns (uint256) {
+        return i_mintDuration;
     }
 
     /*
@@ -272,7 +260,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @notice Returns the current price of ETH in USD.
      */
     function getEthPrice() public view returns (uint256) {
-        return PriceConverter.getPriceInEth(i_priceFeed, MINIMUM_USD);
+        return PriceConverter.getPriceInEth(i_priceFeed, i_minimumUSD);
     }
 
     /*
@@ -286,7 +274,7 @@ contract ZKWillyNFT is ERC721, Ownable {
         }
 
         // Calculate the end time of the mint
-        uint256 mintEndTime = s_mintStartTime + MINT_DURATION;
+        uint256 mintEndTime = s_mintStartTime + i_mintDuration;
 
         // Check if the mint has ended
         if (block.timestamp >= mintEndTime) {
@@ -302,9 +290,7 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @notice Returns the URI for a given token ID.
      * @param tokenId The ID of the token.
      */
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         return s_whaleTypeToURI[s_tokenIdToWhale[tokenId]];
     }
 }

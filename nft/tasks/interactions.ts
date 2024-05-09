@@ -8,7 +8,7 @@ interface ContractInteractions {
 const contracts: ContractInteractions[] = [
   {
     contractName: "ZKWillyNFT",
-    address: "0x3914723e2b745Bd5407042603EEf52d0A4216CEB",
+    address: "0xd035c15A0A2D44cFd8EFD33F3b38cB3320852d1e",
   },
 ];
 

@@ -20,7 +20,6 @@
 	// $: allTxns && loadData(allTxns, timeConversionMap.get(timeValue)!);
 
 	async function fetchData(allTxns: boolean, timeRange: number) {
-		console.log('hit fetchData', allTxns, timeRange);
 		let classification = 5;
 		if (allTxns) {
 			classification = 0;
@@ -36,7 +35,6 @@
 
 			return newData ?? [];
 		} else {
-			console.log('hit time range');
 			const currentTime = new Date();
 			const startTime = new Date(currentTime.getTime() - timeRange);
 
@@ -53,7 +51,6 @@
 	}
 
 	async function loadData(allTxns: boolean = false, timeRange: number) {
-		console.log('hit loadData', allTxns, timeRange);
 		const newData = await fetchData(allTxns, timeRange);
 		data = { txns: newData };
 	}
