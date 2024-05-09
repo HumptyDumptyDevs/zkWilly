@@ -35,7 +35,7 @@
 
 	// Stores
 	const modalStore = getModalStore();
-	let amountMinted = writable(0);
+	let amountMinted = 0;
 
 	const modal: ModalSettings = {
 		type: 'alert',
@@ -74,18 +74,17 @@
 		if (currentTime >= targetTime) {
 			handleTimerFinished();
 			// Using $amountMinted.set here to update the store's value
-			$amountMinted = await getAmountMinted();
-			console.log('Amount minted:', $amountMinted);
+			amountMinted = await getAmountMinted();
+			console.log('Amount minted:', amountMinted);
 		}
 
 		watchContractEvent(wagmiConfig, {
-			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
 			abi,
 			eventName: 'NFTMinted',
 			async onLogs(logs) {
 				console.log('Mint event caught!', logs);
-
-				$amountMinted = await getAmountMinted();
+				amountMinted = await getAmountMinted();
 			}
 		});
 	}
@@ -97,7 +96,7 @@
 		errorMessage = null;
 
 		const unwatchSelfMint = watchContractEvent(wagmiConfig, {
-			address: PUBLIC_NFT_CONTRACT_ADDRESS,
+			address: PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`,
 			abi,
 			eventName: 'NFTMinted',
 			args: { minter: getAccount(wagmiConfig).address },
@@ -146,7 +145,7 @@
 				unwatchSelfMint();
 
 				isMinting = false;
-				$amountMinted = await getAmountMinted();
+				amountMinted = await getAmountMinted();
 			}
 		});
 

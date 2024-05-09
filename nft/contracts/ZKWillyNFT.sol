@@ -18,7 +18,7 @@ contract ZKWillyNFT is ERC721, Ownable {
     event NFTMinted(address indexed minter, uint256 indexed tokenId);
 
     uint256 public constant MINIMUM_USD = 1e18;
-    uint256 public constant MAX_TOKENS = 4;
+    uint256 public constant MAX_TOKENS = 2500;
 
     uint256 private s_tokenCounter;
     uint256 private s_nonce;
@@ -53,10 +53,7 @@ contract ZKWillyNFT is ERC721, Ownable {
     mapping(uint256 => WhaleType) private s_tokenIdToWhale;
     mapping(WhaleType => string) private s_whaleTypeToURI;
 
-    constructor(
-        string[] memory initWhaleURIs,
-        address priceFeed
-    )
+    constructor(string[] memory initWhaleURIs, address priceFeed)
         // address payable _seaShepherdWallet
         ERC721("zkWillyNFT", "WILLY")
         Ownable()
@@ -97,17 +94,12 @@ contract ZKWillyNFT is ERC721, Ownable {
     }
 
     function getPsuedoRandomNumber(uint8 modulus) private returns (uint8) {
-        uint256 random = uint256(
-            keccak256(abi.encodePacked(block.timestamp, msg.sender, s_nonce))
-        );
+        uint256 random = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, s_nonce)));
         s_nonce++;
         return uint8(random % modulus);
     }
 
-    function determineWhaleType(
-        uint8 chance,
-        uint256 balance
-    ) private pure returns (WhaleType) {
+    function determineWhaleType(uint8 chance, uint256 balance) private pure returns (WhaleType) {
         if (chance == 1) {
             return WhaleType.GOLDEN_WILLY;
         }
@@ -117,32 +109,21 @@ contract ZKWillyNFT is ERC721, Ownable {
         } else if (balance < 0.2 ether) {
             return chance < 10 ? WhaleType.SHINY_SHRIMP : WhaleType.SHRIMP;
         } else if (balance < 0.5 ether) {
-            return
-                chance < 10 ? WhaleType.SHINY_PUFFERFISH : WhaleType.PUFFERFISH;
+            return chance < 10 ? WhaleType.SHINY_PUFFERFISH : WhaleType.PUFFERFISH;
         } else if (balance < 1 ether) {
             return chance < 10 ? WhaleType.SHINY_DOLPHIN : WhaleType.DOLPHIN;
         } else if (balance < 3 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_BELUGA_WHALE
-                    : WhaleType.BELUGA_WHALE;
+            return chance < 10 ? WhaleType.SHINY_BELUGA_WHALE : WhaleType.BELUGA_WHALE;
         } else if (balance < 5 ether) {
             return chance < 10 ? WhaleType.SHINY_NARWHAL : WhaleType.NARWHAL;
         } else if (balance < 10 ether) {
             return chance < 10 ? WhaleType.SHINY_ORCA : WhaleType.ORCA;
         } else if (balance < 20 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_HUMPBACK_WHALE
-                    : WhaleType.HUMPBACK_WHALE;
+            return chance < 10 ? WhaleType.SHINY_HUMPBACK_WHALE : WhaleType.HUMPBACK_WHALE;
         } else if (balance < 100 ether) {
-            return
-                chance < 10
-                    ? WhaleType.SHINY_SPERM_WHALE
-                    : WhaleType.SPERM_WHALE;
+            return chance < 10 ? WhaleType.SHINY_SPERM_WHALE : WhaleType.SPERM_WHALE;
         } else {
-            return
-                chance < 10 ? WhaleType.SHINY_BLUE_WHALE : WhaleType.BLUE_WHALE;
+            return chance < 10 ? WhaleType.SHINY_BLUE_WHALE : WhaleType.BLUE_WHALE;
         }
     }
 
@@ -158,9 +139,7 @@ contract ZKWillyNFT is ERC721, Ownable {
         return PriceConverter.getPriceInEth(s_priceFeed, MINIMUM_USD);
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         return s_whaleTypeToURI[s_tokenIdToWhale[tokenId]];
     }
 }

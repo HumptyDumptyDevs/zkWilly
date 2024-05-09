@@ -540,13 +540,13 @@
           "ipfs://QmdGKySFeWNpqgsij2vGiHiZU1qYbqevyjgrnmcydecNNe/",
           "ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/"
         ],
-        "0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF"
+        "0x6D41d1dc818112880b40e26BD6FD347E41008eDA"
       ],
       "salt": "0x0000000000000000000000000000000000000000000000000000000000000000",
       "deploymentType": "create",
       "factoryDeps": [],
-      "address": "0xfEAD7C525F2B8e7FB8f18EF3D639Ed765802fE6b",
-      "txHash": "0xcc64da0af4257b393a93d7978582ce7365cf762a6713d4d082523ec89138a5ed"
+      "address": "0x16568a146ec241e9dA25bd0803B60D82D429f8B7",
+      "txHash": "0xd6199b12b2da6fc1c98c676b33866def47f4be6329e21234cd9f2df0dae47cfb"
     }
   ]
 }
