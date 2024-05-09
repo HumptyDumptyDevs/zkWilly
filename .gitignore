@@ -1,4 +1,4 @@
 **/node_modules
 terraform/.terraform
 **/.env*
-nft/deployments-zk
+nft/deployments-zk/** 

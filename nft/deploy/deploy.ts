@@ -31,13 +31,7 @@ export default async function () {
 
   const contract = await deployContract(
     "ZKWillyNFT",
-    [
-      initWhaleURIs,
-      priceFeedAddress,
-      2500,
-      "0x000000000000000000000000000000000000800A", // zkSync L2 Bridge address
-      "0xa22ea449ac6bb4ed60d25cc19cee7755c74d34d4", // Recipeint address
-    ],
+    [initWhaleURIs, priceFeedAddress, 2500],
     {
       wallet: wallet,
     }
