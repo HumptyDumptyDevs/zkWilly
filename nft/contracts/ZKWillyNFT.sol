@@ -27,8 +27,8 @@ contract ZKWillyNFT is ERC721, Ownable {
     /////////////////////////
     //  State Variables   //
     ////////////////////////
-    uint256 private constant MINIMUM_USD = 1e18;
-    uint256 private constant MINT_DURATION = 5 minutes;
+    uint256 private constant MINIMUM_USD = 20e18;
+    uint256 private constant MINT_DURATION = 10 minutes;
     uint256 private s_mintStartTime;
     uint256 private s_tokenCounter;
     uint256 private s_nonce;
@@ -79,20 +79,20 @@ contract ZKWillyNFT is ERC721, Ownable {
      * @param withdrawalWallet Address for receiving collected funds.
      */
     constructor(
-        string[] memory initWhaleURIs,
-        address priceFeedAddress,
-        uint256 tokenLimit,
-        address withdrawalWallet
+        string[] memory _initWhaleURIs,
+        address _priceFeedAddress,
+        uint256 _tokenLimit,
+        address _withdrawalWallet
     ) ERC721("zkWillyNFT", "WILLY") Ownable() {
-        if (initWhaleURIs.length != 21) {
+        if (_initWhaleURIs.length != 21) {
             revert ZKWillyNFT__NotEnoughWhales();
         }
-        for (uint256 i = 0; i < initWhaleURIs.length; i++) {
-            s_whaleTypeToURI[WhaleType(i)] = initWhaleURIs[i];
+        for (uint256 i = 0; i < _initWhaleURIs.length; i++) {
+            s_whaleTypeToURI[WhaleType(i)] = _initWhaleURIs[i];
         }
-        i_tokenLimit = tokenLimit;
-        i_priceFeed = AggregatorV3Interface(priceFeedAddress);
-        i_withdrawalWallet = withdrawalWallet;
+        i_tokenLimit = _tokenLimit;
+        i_priceFeed = AggregatorV3Interface(_priceFeedAddress);
+        i_withdrawalWallet = _withdrawalWallet;
         s_nonce = 0;
         s_tokenCounter = 1;
     }
@@ -276,6 +276,29 @@ contract ZKWillyNFT is ERC721, Ownable {
      */
     function getEthPrice() public view returns (uint256) {
         return PriceConverter.getPriceInEth(i_priceFeed, MINIMUM_USD);
+    }
+
+    /*
+     * @notice Returns the amount of time left in the current mint window.
+     * @return remainingTime The time remaining in seconds, or 0 if the mint period has ended.
+     */
+    function getTimeLeftOnMint() public view returns (uint256) {
+        // Ensure the mint has started
+        if (s_mintStartTime == 0) {
+            return 0;
+        }
+
+        // Calculate the end time of the mint
+        uint256 mintEndTime = s_mintStartTime + MINT_DURATION;
+
+        // Check if the mint has ended
+        if (block.timestamp >= mintEndTime) {
+            return 0;
+        }
+
+        // Return the remaining time
+        uint256 remainingTime = mintEndTime - block.timestamp;
+        return remainingTime;
     }
 
     /*

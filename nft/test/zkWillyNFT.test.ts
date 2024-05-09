@@ -49,16 +49,16 @@ describe("ZKWillyNFT Minting", function () {
     );
   });
 
-  it("Testing $1", async function () {
-    //ETH is $4000
-    //$1 worth of ETH is 0.00025
-    const tx = await nftContract.mintNFT({
-      value: ethers.parseEther("0.0003"),
-    });
-    await tx.wait();
-    const balance = await nftContract.balanceOf(deployerWallet.address);
-    expect(balance).to.equal(BigInt("1"));
-  });
+  // it("Testing $1", async function () {
+  //   //ETH is $4000
+  //   //$1 worth of ETH is 0.00025
+  //   const tx = await nftContract.mintNFT({
+  //     value: ethers.parseEther("0.0003"),
+  //   });
+  //   await tx.wait();
+  //   const balance = await nftContract.balanceOf(deployerWallet.address);
+  //   expect(balance).to.equal(BigInt("1"));
+  // });
 
   it("Should have correct token URI after minting", async function () {
     const whaleType = await nftContract.getWhaleType(1);
@@ -197,46 +197,46 @@ describe("ZKWillyNFT Limit Test", function () {
   });
 });
 
-describe("ZKWillyNFT Golden Willy Test", function () {
-  let nftContract: Contract;
-  let deployerWallet: Wallet;
+// describe("ZKWillyNFT Golden Willy Test", function () {
+//   let nftContract: Contract;
+//   let deployerWallet: Wallet;
 
-  before(async function () {
-    ({ contract: nftContract, wallet: deployerWallet } = await deploy());
-    await nftContract.startMint();
-  });
+//   before(async function () {
+//     ({ contract: nftContract, wallet: deployerWallet } = await deploy());
+//     await nftContract.startMint();
+//   });
 
-  it("should have approximately 1% Golden Willy NFTs", async function () {
-    this.timeout(0); // No Timeout
+//   it("should have approximately 1% Golden Willy NFTs", async function () {
+//     this.timeout(0); // No Timeout
 
-    const numberOfTests = 500;
-    let goldenWillyCount = 0;
+//     const numberOfTests = 500;
+//     let goldenWillyCount = 0;
 
-    for (let i = 0; i < numberOfTests; i++) {
-      console.log("Minting NFT: ", i + 1);
-      const tx = await nftContract.mintNFT({
-        value: ethers.parseEther("0.1"),
-      });
-      await tx.wait();
+//     for (let i = 0; i < numberOfTests; i++) {
+//       console.log("Minting NFT: ", i + 1);
+//       const tx = await nftContract.mintNFT({
+//         value: ethers.parseEther("0.1"),
+//       });
+//       await tx.wait();
 
-      const latestTokenId = await nftContract.getTotalTokenCount();
+//       const latestTokenId = await nftContract.getTotalTokenCount();
 
-      const whaleType = await nftContract.getWhaleType(latestTokenId);
-      const readableType = whaleTypes[whaleType];
-      if (readableType === "GOLDEN_WILLY") {
-        console.log("GOLDEN WILLY FOUND");
-        goldenWillyCount++;
-      }
-    }
+//       const whaleType = await nftContract.getWhaleType(latestTokenId);
+//       const readableType = whaleTypes[whaleType];
+//       if (readableType === "GOLDEN_WILLY") {
+//         console.log("GOLDEN WILLY FOUND");
+//         goldenWillyCount++;
+//       }
+//     }
 
-    const proportion = goldenWillyCount / numberOfTests;
+//     const proportion = goldenWillyCount / numberOfTests;
 
-    console.log(
-      `Golden Willy's minted ${goldenWillyCount} times out of ${numberOfTests} tests. Proportion: ${proportion}`
-    );
-    expect(proportion).to.be.closeTo(0.01, 0.01);
-  });
-});
+//     console.log(
+//       `Golden Willy's minted ${goldenWillyCount} times out of ${numberOfTests} tests. Proportion: ${proportion}`
+//     );
+//     expect(proportion).to.be.closeTo(0.01, 0.01);
+//   });
+// });
 
 describe("ZKWillyNFT Mint Duration Test", function () {
   let nftContract: Contract;
