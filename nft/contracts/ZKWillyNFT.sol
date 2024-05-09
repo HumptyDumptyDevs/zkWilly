@@ -252,13 +252,6 @@ contract ZKWillyNFT is ERC721, Ownable {
     }
 
     /*
-     * @notice Returns the address designated to receive collected funds.
-     */
-    function getWithdrawalWallet() public view returns (address) {
-        return i_withdrawalWallet;
-    }
-
-    /*
      * @notice Returns the current price of ETH in USD.
      */
     function getEthPrice() public view returns (uint256) {
