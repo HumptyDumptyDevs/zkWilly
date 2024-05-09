@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-chai-matchers";
-
 import "@matterlabs/hardhat-zksync";
 
 const config: HardhatUserConfig = {
@@ -10,6 +9,9 @@ const config: HardhatUserConfig = {
       url: "https://sepolia.era.zksync.dev",
       ethNetwork: "sepolia",
       zksync: true,
+      accounts: [
+        "fb3458510194b182fd50bc0b0588ad424f7adddc7f00e9ef7a04ff77276082be",
+      ],
       verifyURL:
         "https://explorer.sepolia.era.zksync.dev/contract_verification",
     },

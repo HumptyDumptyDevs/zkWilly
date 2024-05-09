@@ -19,7 +19,7 @@ export default async function () {
   //if network is local, deploy using local rich wallet
   const wallet =
     network === "hardhat" ||
-    network === "localhost" ||
+    network === "inMemoryNode" ||
     network === "dockerizedNode"
       ? getWallet(LOCAL_RICH_WALLETS[0].privateKey)
       : getWallet();
@@ -31,9 +31,15 @@ export default async function () {
 
   const contract = await deployContract(
     "ZKWillyNFT",
-    [initWhaleURIs, priceFeedAddress],
+    [
+      initWhaleURIs,
+      priceFeedAddress,
+      2500,
+      "0x000000000000000000000000000000000000800A", // zkSync L2 Bridge address
+      "0xa22ea449ac6bb4ed60d25cc19cee7755c74d34d4", // Recipeint address
+    ],
     {
-      wallet,
+      wallet: wallet,
     }
   );
 
