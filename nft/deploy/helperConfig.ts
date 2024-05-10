@@ -27,27 +27,27 @@ export async function getChainlinkPriceFeedAddress(network) {
 }
 
 export const initWhaleURIs = [
-  "ipfs://bafybeifij3cp5qpu6lyzwipcwfizmku76677znncbpma4uswj62hw3x64a/", // Plankton
-  "ipfs://bafybeidupvoizsugpjnv5i7cbk2rqqosx5xxximdgerh3sbqojm345wc3q/", // Shiny Plankton
-  "ipfs://bafybeibezlp2riqhpvj3qphx6ylzcvm3si3logkh5zqwdbuy4qb2ytrtjq/", // Shrimp
-  "ipfs://bafybeid2vmtql3kxzojofp6dmqzs3wuovbj4oo3gblprcgqmlqktljtxeq/", // Shiny Shrimp
-  "ipfs://bafybeickhw2nqjly634oxvxmt6iiymq3sybkxj5x7uv4kxfzvujiu336vq/", // Pufferfish
-  "ipfs://bafybeidv5jds4uphp3k556c4omjyimlcnbztovwkq2avrosd66c2fj7t7q/", // Shiny Pufferfish
-  "ipfs://bafybeibttbf4kavxtlmmpnu5cfmzxlxhgj3b7otcjzrlhynmp4me27t75a/", // Dolphin
-  "ipfs://bafybeib32vx4vsrlb4pz5ril4dqpix5vfv7atnadfrmqnlg5fiil6cj5te/", // Shiny Dolphin
-  "ipfs://bafybeigha5hy5z2e7i2xgtttoc3xppj5zgfakjkwmvoovrm4rzywvegsaq/", // Beluga Whale
-  "ipfs://bafybeiexrte6ljd7uuzcrzatxmhxokvr22hcauhp3fuaov2l3qbangml6q/", // Shiny Beluga Whale
-  "ipfs://bafybeigc3w3l2ylfsqbuvf2hsplriaw6jzi3oz2mwhspxscxmutlltfexa/", // Narwhal
-  "ipfs://bafybeidr4sd4alx6k2xsupx4injrpsm6m4qep35tii3mbflebumg5lo5o4/", // Shiny Narwhal
-  "ipfs://bafybeic3m7o2qw4by7mstiwukevytbsu2fqqcxb5xmifw7cialijj5fpuq/", // Orca
-  "ipfs://bafybeifcz3eooqvsxufezd3epcljc64ttgnyxr3vfydxswne6iyyy6bcny/", // Shiny Orca
-  "ipfs://bafybeigt257qbdpilruze6wxemz6q5lyu65p2czje2fimk7xtqrh46sh7u/", // Humback Whale
-  "ipfs://bafybeiaa4yb4szjvvq2ni2gbxwld5unvibwvtixnpiazoqclk5vxmusr6u/", // Shiny Humback Whale
-  "ipfs://bafybeiavxwub6ojqcwqqq25xh6l7z32qykhahc5cl45m766e47azsbesge/", // Sperm Whale
-  "ipfs://bafybeicousbxlyjge25iwzomjnhs5uurq2vb7qiqg7dqjohggtg2oblozm/", // Shiny Sperm Whale
-  "ipfs://bafybeibix2lvq7m4tsv7wjebeezzqqyn4dcsxclnd2wu43r2nnmayq2qr4/", // Blue Whale
-  "ipfs://bafybeihq5ba6wkpetsrpfcxyzuzm54lcjw7jkl4w2q5leqpz3ayccjdmby/", // Shiny Blue Whale
-  "ipfs://bafybeifwqjlefotbds2cuakwredj4klxlsivkksqb4su6stysgqvekcdue/", // Golden Willy
+  "ipfs://QmY4TJEBNdARPwfXBvL2HhKsQf36PjUGokz2wksd5oF5ah/", // Plankton
+  "ipfs://QmWDScpviJzPzD8WhEday1GjVTMMiQF3UNtP5aDqPh6oxT/", // Shiny Plankton
+  "ipfs://Qma5DPMj4XeihW6mvuGuqUbjkbLeSJUWsHqGkBX98Qnkeg/", // Shrimp
+  "ipfs://QmcW2z6UfXQcV1n9zt9fQCiUPNqop8tvCGmuTtMMR84ZkF/", // Shiny Shrimp
+  "ipfs://QmaBDxQgh9vRRqswacic6tAZgfjnu5Ci9uY2krzBZf4GVB/", // Pufferfish
+  "ipfs://QmedpgVF91HHdWXN1yn9v5PMVPdoee6627ANaBVbmWRQTX/", // Shiny Pufferfish
+  "ipfs://QmV1mtATyJ8s6Z6Z2uukVtDxa1vo9rduEz6aXY5D1UYgWh/", // Dolphin
+  "ipfs://QmSPaNzEYQKd6t7a3idMsLf2tba7sdPJraRfPk2LZtKoRh/", // Shiny Dolphin
+  "ipfs://Qmd1A3nS9BaSRhrFmSA7hoS86qaAZ1MTfEKVAMdQ9uwYwv/", // Beluga Whale
+  "ipfs://QmXVbcKt2VCPkZmV2aKwBdPx6PBch9Uv7dRPmW8SC8qGjD/", // Shiny Beluga Whale
+  "ipfs://QmXaMHiJUXBg4Kq1eozmashFdLS1kHkiFKgAdXz13dqSMC/", // Narwhal
+  "ipfs://QmRyxrqQgLSAVXs4b2T3k5ubBgjT5NE8UF2sExWFimdxWA/", // Shiny Narwhal
+  "ipfs://Qmf5mH5fSwe8Q72g2eagJaHBUHQxgsyyMFZqkDGCs3dcaZ/", // Orca
+  "ipfs://QmViHFvfytZR95txpUf38G9YJV2BuX2ThH5UaGcdJMstgN/", // Shiny Orca
+  "ipfs://QmTQFQVUFTNscWvptfC5m3ZHNZ4d8cc8WiRuYBbmXrUpCE/", // Humpback Whale
+  "ipfs://QmNgxr5tYhpkUmVzvRnpzGuvYpFdBvMXNasC4MHAtZ2xfo/", // Shiny Humpback Whale
+  "ipfs://QmQdGNx8ZCdegtvHzvFykZWmgYKNB6dH9Tqg3E39YtuBEz/", // Sperm Whale
+  "ipfs://QmPRkvqRBmpZAcGoML8Secxng3CFwipQiP13Hj7iray7HP/", // Shiny Sperm Whale
+  "ipfs://QmPA7KZAaSSxuaeAWjLpCpJZpiry16tZgEtEwy1UhBrXgX/", // Blue Whale
+  "ipfs://QmdGKySFeWNpqgsij2vGiHiZU1qYbqevyjgrnmcydecNNe/", // Shiny Blue Whale
+  "ipfs://QmaEGwr94jusX6snxrytrsiMCrjDZRtAAQUz8uE5Z9NiTz/", // Golden Willy
 ];
 
 export const whaleTypes = [

@@ -3,13 +3,18 @@ export const abi = [
 		inputs: [
 			{
 				internalType: 'string[]',
-				name: 'initWhaleURIs',
+				name: '_initWhaleURIs',
 				type: 'string[]'
 			},
 			{
 				internalType: 'address',
-				name: 'priceFeed',
+				name: '_priceFeedAddress',
 				type: 'address'
+			},
+			{
+				internalType: 'uint256',
+				name: '_tokenLimit',
+				type: 'uint256'
 			}
 		],
 		stateMutability: 'nonpayable',
@@ -22,12 +27,32 @@ export const abi = [
 	},
 	{
 		inputs: [],
+		name: 'ZKWillyNFT__MintEnded',
+		type: 'error'
+	},
+	{
+		inputs: [],
+		name: 'ZKWillyNFT__MintNotEnded',
+		type: 'error'
+	},
+	{
+		inputs: [],
+		name: 'ZKWillyNFT__MintNotStarted',
+		type: 'error'
+	},
+	{
+		inputs: [],
 		name: 'ZKWillyNFT__NotEnoughETHSent',
 		type: 'error'
 	},
 	{
 		inputs: [],
 		name: 'ZKWillyNFT__NotEnoughWhales',
+		type: 'error'
+	},
+	{
+		inputs: [],
+		name: 'ZKWillyNFT__WithdrawalFailed',
 		type: 'error'
 	},
 	{
@@ -85,6 +110,51 @@ export const abi = [
 		inputs: [
 			{
 				indexed: true,
+				internalType: 'uint256',
+				name: 'amount',
+				type: 'uint256'
+			}
+		],
+		name: 'FundsWithdrawn',
+		type: 'event'
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'uint256',
+				name: 'startTime',
+				type: 'uint256'
+			}
+		],
+		name: 'MintStarted',
+		type: 'event'
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'minter',
+				type: 'address'
+			},
+			{
+				indexed: true,
+				internalType: 'uint256',
+				name: 'tokenId',
+				type: 'uint256'
+			}
+		],
+		name: 'NFTMinted',
+		type: 'event'
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
 				internalType: 'address',
 				name: 'previousOwner',
 				type: 'address'
@@ -123,32 +193,6 @@ export const abi = [
 		],
 		name: 'Transfer',
 		type: 'event'
-	},
-	{
-		inputs: [],
-		name: 'MAX_TOKENS',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256'
-			}
-		],
-		stateMutability: 'view',
-		type: 'function'
-	},
-	{
-		inputs: [],
-		name: 'MINIMUM_USD',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256'
-			}
-		],
-		stateMutability: 'view',
-		type: 'function'
 	},
 	{
 		inputs: [
@@ -201,6 +245,84 @@ export const abi = [
 				internalType: 'address',
 				name: '',
 				type: 'address'
+			}
+		],
+		stateMutability: 'view',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getEthPrice',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
+			}
+		],
+		stateMutability: 'view',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getMinimumUSD',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
+			}
+		],
+		stateMutability: 'pure',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getMintDuration',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
+			}
+		],
+		stateMutability: 'pure',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getMintStartTime',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
+			}
+		],
+		stateMutability: 'view',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getTimeLeftOnMint',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
+			}
+		],
+		stateMutability: 'view',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'getTokenLimit',
+		outputs: [
+			{
+				internalType: 'uint256',
+				name: '',
+				type: 'uint256'
 			}
 		],
 		stateMutability: 'view',
@@ -391,6 +513,13 @@ export const abi = [
 		type: 'function'
 	},
 	{
+		inputs: [],
+		name: 'startMint',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function'
+	},
+	{
 		inputs: [
 			{
 				internalType: 'bytes4',
@@ -473,6 +602,13 @@ export const abi = [
 			}
 		],
 		name: 'transferOwnership',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function'
+	},
+	{
+		inputs: [],
+		name: 'withdraw',
 		outputs: [],
 		stateMutability: 'nonpayable',
 		type: 'function'

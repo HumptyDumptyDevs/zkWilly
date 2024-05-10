@@ -2,11 +2,18 @@
 	import '../app.postcss';
 	import zkWillyLogo from '../assets/zkWilly_Logo.png';
 	import zkWillyWordmark from '../assets/zkWilly_Wordmark.png';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { initializeStores, Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import '../lib/web3modal';
+	import { PUBLIC_ENV } from '$env/static/public';
+	import { inject } from '@vercel/analytics';
+
+	inject({ mode: PUBLIC_ENV === 'development' ? 'development' : 'production' });
+
+	initializeStores();
 </script>
 
 <main class="mx-auto h-full bg-cover" style="background-image: url(/zkWilly_Background_3.png);">
+	<Modal />
 	<AppShell>
 		<svelte:fragment slot="header">
 			<AppBar

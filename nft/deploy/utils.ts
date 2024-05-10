@@ -126,8 +126,8 @@ export const deployContract = async (
 
   log(`Estimated deployment cost: ${ethers.formatEther(deploymentFee)} ETH`);
 
-  // Check if the wallet has enough balance
-  await verifyEnoughBalance(wallet, deploymentFee);
+  // // Check if the wallet has enough balance
+  // await verifyEnoughBalance(wallet, deploymentFee);
 
   // Deploy the contract to zkSync
   const contract = await deployer.deploy(artifact, constructorArguments);

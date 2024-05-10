@@ -1,6 +1,8 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@matterlabs/hardhat-zksync";
+import "./tasks/interactions";
+require("dotenv").config();
 
 const config: HardhatUserConfig = {
   defaultNetwork: "zkSyncSepoliaTestnet",
@@ -9,6 +11,7 @@ const config: HardhatUserConfig = {
       url: "https://sepolia.era.zksync.dev",
       ethNetwork: "sepolia",
       zksync: true,
+      accounts: [process.env.WALLET_PRIVATE_KEY!],
       verifyURL:
         "https://explorer.sepolia.era.zksync.dev/contract_verification",
     },
@@ -16,6 +19,7 @@ const config: HardhatUserConfig = {
       url: "https://mainnet.era.zksync.io",
       ethNetwork: "mainnet",
       zksync: true,
+      accounts: [process.env.WALLET_PRIVATE_KEY!],
       verifyURL:
         "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
     },

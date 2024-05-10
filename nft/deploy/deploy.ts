@@ -4,7 +4,11 @@ import { getWallet, deployContract, LOCAL_RICH_WALLETS } from "./utils";
 
 // This script is used to deploy an NFT contract
 // as well as verify it on Block Explorer if possible for the network
-export default async function () {
+export default async function (
+  mintDuration: number = 600,
+  maxTokens: number = 10,
+  minimumUSD = hre.ethers.parseUnits("1.0", "ether").toString()
+) {
   const network = hre.network.name;
   const priceFeedAddress = await getChainlinkPriceFeedAddress(network);
 
@@ -16,13 +20,25 @@ export default async function () {
 
   console.log("Deploying ZKWillyNFT contract... on network: ", network);
 
-  //if network is local, deploy using local rich wallet
-  const wallet =
+  let wallet;
+
+  if (
     network === "hardhat" ||
     network === "inMemoryNode" ||
     network === "dockerizedNode"
-      ? getWallet(LOCAL_RICH_WALLETS[0].privateKey)
-      : getWallet();
+  ) {
+    wallet = getWallet(LOCAL_RICH_WALLETS[0].privateKey);
+  } else {
+    //48 hours in seconds
+    mintDuration = 60 * 60 * 48;
+
+    // $20
+    minimumUSD = hre.ethers.parseUnits("20.0", "ether").toString();
+
+    // Max 2500 tokens
+    maxTokens = 2500;
+    wallet = getWallet();
+  }
 
   console.log(
     "Deploying ZKWillyNFT contract... with priceFeed: ",
@@ -31,7 +47,7 @@ export default async function () {
 
   const contract = await deployContract(
     "ZKWillyNFT",
-    [initWhaleURIs, priceFeedAddress, 2500],
+    [initWhaleURIs, priceFeedAddress, maxTokens, mintDuration, minimumUSD],
     {
       wallet: wallet,
     }

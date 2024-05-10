@@ -1,8 +1,10 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let targetDate;
-	let amountMinted = 0;
+	export let amountMinted;
+	let totalTokens = 2500;
 
 	// Calculate remaining time in milliseconds
 	let remainingTime = new Date(targetDate).getTime() - Date.now();
@@ -13,11 +15,19 @@
 	$: minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
 	$: seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
+	// Create a dispatcher to send signals
+	const dispatch = createEventDispatcher();
+
 	// Detect when the timer has finished and send the signal
 	$: hasTimeElapsed = remainingTime <= 0;
-	const dispatch = createEventDispatcher();
+
 	$: if (hasTimeElapsed) {
 		dispatch('timerFinished');
+	}
+
+	// Detect when max tokens have been minted
+	$: if (amountMinted >= totalTokens) {
+		dispatch('maxTokensMinted');
 	}
 
 	// Update the view every second
@@ -33,7 +43,11 @@
 		</div>
 	{:else}
 		<div class="flex justify-center timer text-black font-bold">
-			{amountMinted} / 2500
+			{#if amountMinted >= totalTokens}
+				SOLD OUT
+			{:else}
+				{amountMinted} / {totalTokens}
+			{/if}
 		</div>
 	{/if}
 </main>

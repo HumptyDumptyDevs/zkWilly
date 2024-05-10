@@ -22,4 +22,16 @@ library PriceConverter {
         // the actual ETH/USD conversion rate, after adjusting the extra 0s.
         return ethAmountInUsd;
     }
+
+    function getPriceInEth(
+        AggregatorV3Interface priceFeed,
+        uint256 minimumUsd
+    ) internal view returns (uint256) {
+        uint256 ethPrice = getPrice(priceFeed);
+        // scalingFactor to adjust the decimal places ahead of division
+        uint256 scalingFactor = 1e18;
+        uint256 scaledMinimumUsd = minimumUsd * scalingFactor; // Assuming 18 decimals for ETH
+        uint256 ethAmount = scaledMinimumUsd / ethPrice;
+        return ethAmount;
+    }
 }
