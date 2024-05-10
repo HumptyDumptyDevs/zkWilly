@@ -48,7 +48,7 @@
 		image: 'https://i.imgur.com/WOgTG96.gif'
 	};
 
-	let targetDate = '2024-05-10T12:00:00';
+	let targetDate = '2024-05-09T12:00:00';
 	let timerFinished = false;
 	let maxTokensMinted = false;
 	let isMinting = false;
@@ -288,7 +288,7 @@
 					1% chance of a legendary creature
 				</p>
 				<a
-					href="https://media.tenor.com/FawYo00tBekAAAAe/loading-thinking.png"
+					href="https://explorer.zksync.io/address/0x3914723e2b745Bd5407042603EEf52d0A4216CEB#transactions"
 					class="text-blue-500 underline pb-4 md:pb-0"
 					target="_blank"
 				>
