@@ -4,6 +4,10 @@
 	import zkWillyWordmark from '../assets/zkWilly_Wordmark.png';
 	import { initializeStores, Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import '../lib/web3modal';
+	import { PUBLIC_ENV } from '$env/static/public';
+	import { inject } from '@vercel/analytics';
+
+	inject({ mode: PUBLIC_ENV === 'development' ? 'development' : 'production' });
 
 	initializeStores();
 </script>

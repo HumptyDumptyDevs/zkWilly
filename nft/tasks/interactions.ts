@@ -1,4 +1,5 @@
 import { task } from "hardhat/config";
+require("dotenv").config();
 
 interface ContractInteractions {
   contractName: string;
@@ -8,7 +9,7 @@ interface ContractInteractions {
 const contracts: ContractInteractions[] = [
   {
     contractName: "ZKWillyNFT",
-    address: "0xd035c15A0A2D44cFd8EFD33F3b38cB3320852d1e",
+    address: process.env.PUBLIC_NFT_CONTRACT_ADDRESS!,
   },
 ];
 

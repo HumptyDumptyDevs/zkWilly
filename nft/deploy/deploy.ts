@@ -6,6 +6,7 @@ import { getWallet, deployContract, LOCAL_RICH_WALLETS } from "./utils";
 // as well as verify it on Block Explorer if possible for the network
 export default async function (
   mintDuration: number = 600,
+  maxTokens: number = 10,
   minimumUSD = hre.ethers.parseUnits("1.0", "ether").toString()
 ) {
   const network = hre.network.name;
@@ -30,8 +31,12 @@ export default async function (
   } else {
     //48 hours in seconds
     mintDuration = 60 * 60 * 48;
+
     // $20
     minimumUSD = hre.ethers.parseUnits("20.0", "ether").toString();
+
+    // Max 2500 tokens
+    maxTokens = 2500;
     wallet = getWallet();
   }
 
@@ -42,7 +47,7 @@ export default async function (
 
   const contract = await deployContract(
     "ZKWillyNFT",
-    [initWhaleURIs, priceFeedAddress, 2500, mintDuration, minimumUSD],
+    [initWhaleURIs, priceFeedAddress, maxTokens, mintDuration, minimumUSD],
     {
       wallet: wallet,
     }

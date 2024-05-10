@@ -19,6 +19,7 @@ const config: HardhatUserConfig = {
       url: "https://mainnet.era.zksync.io",
       ethNetwork: "mainnet",
       zksync: true,
+      accounts: [process.env.WALLET_PRIVATE_KEY!],
       verifyURL:
         "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
     },

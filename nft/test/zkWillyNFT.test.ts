@@ -21,6 +21,10 @@ describe("ZKWillyNFT Minting", function () {
     await nftContract.startMint();
   });
 
+  it("Should let the owner start the mint", async function () {
+    await expect(nftContract.startMint()).to.emit(nftContract, "MintStarted");
+  });
+
   it("Should mint a new NFT to the recipient if enough ETH sent", async function () {
     //Work out $21 in ETH if the price of ETH is $4000
 
@@ -36,12 +40,11 @@ describe("ZKWillyNFT Minting", function () {
 
   it("It shouldn't mint a new NFT if the recipient doesn't send enough ETH", async function () {
     //Work out $19 in ETH if the price of ETH is $4000
-
     // 19 / 4000 = 0.00475
 
     await expect(
       nftContract.mintNFT({
-        value: ethers.parseEther("0.00475"),
+        value: ethers.parseEther("0.0000475"),
       })
     ).to.be.revertedWithCustomError(
       nftContract,
@@ -122,6 +125,10 @@ describe("ZKWillyNFT Boundry Test", function () {
     await nftContract.startMint();
   });
 
+  it("Should let the owner start the mint", async function () {
+    await expect(nftContract.startMint()).to.emit(nftContract, "MintStarted");
+  });
+
   const testCases = [
     { balance: "0.109", expectedTypes: ["PLANKTON", "SHINY_PLANKTON"] },
     { balance: "0.2", expectedTypes: ["SHRIMP", "SHINY_SHRIMP"] },
@@ -178,6 +185,10 @@ describe("ZKWillyNFT Limit Test", function () {
 
     ({ contract: nftContract, wallet: deployerWallet } = await deploy());
     await nftContract.startMint();
+  });
+
+  it("Should let the owner start the mint", async function () {
+    await expect(nftContract.startMint()).to.emit(nftContract, "MintStarted");
   });
 
   it("Should only mint the maximum number of tokens", async function () {
