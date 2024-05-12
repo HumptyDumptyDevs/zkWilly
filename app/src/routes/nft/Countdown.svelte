@@ -46,7 +46,8 @@
 			{#if amountMinted >= totalTokens}
 				SOLD OUT
 			{:else}
-				{amountMinted} / {totalTokens}
+				<!-- {amountMinted} / {totalTokens} -->
+				MINT FINISHED
 			{/if}
 		</div>
 	{/if}
