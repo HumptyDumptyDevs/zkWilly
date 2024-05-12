@@ -203,13 +203,9 @@
 				<button
 					class="btn btn-sm md:btn-md variant-filled-secondary mt-2 font-bold w-full rounded-none"
 					on:click={mint}
-					disabled={!($account.isConnected && timerFinished && !maxTokensMinted) || isMinting}
+					disabled={true}
 				>
-					{#if isMinting}
-						Minting...
-					{:else}
-						Mint
-					{/if}
+					Mint
 				</button>
 				{#if errorMessage}
 					<p class="text-red-500 text-sm font-bold">
